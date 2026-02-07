@@ -22,10 +22,11 @@ export default async function AdminRoomsPage({
   const supabase = await createClient();
   const { data: site } = await supabase
     .from("sites")
-    .select("id, name")
+    .select("id, name, logo_url")
     .eq("id", siteId)
     .single();
   if (!site) redirect("/app/admin/sites");
+  const siteLogoUrl = (site as { logo_url?: string | null }).logo_url ?? null;
 
   const { data: roomsRaw } = await supabase
     .from("rooms")
@@ -77,7 +78,13 @@ export default async function AdminRoomsPage({
           <p className="text-xs text-muted-foreground mt-1">Type <strong>1-122</strong> in Quick range (or use From/To) to create 122 separate rooms (1, 2, 3 … 122), each with its own QR code. Then use Export QR to print e.g. room 57.</p>
         </div>
         <RoomCsvUploader siteId={siteId} />
-        <QrExportPanel siteId={siteId} rooms={rooms ?? []} baseUrl={baseUrl} />
+        <QrExportPanel
+          siteId={siteId}
+          siteName={site.name}
+          siteLogoUrl={siteLogoUrl}
+          rooms={rooms ?? []}
+          baseUrl={baseUrl}
+        />
       </div>
 
       <div className="mt-8">

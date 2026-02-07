@@ -22,6 +22,14 @@ type RoomWithToken = {
   room_tokens: { token: string }[] | { token: string } | null;
 };
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 /** Normalize room_tokens to an array (Supabase can return array or single object; RSC may alter shape). */
 function getTokenList(room: RoomWithToken): { token: string }[] {
   const t = room.room_tokens;
@@ -31,12 +39,33 @@ function getTokenList(room: RoomWithToken): { token: string }[] {
   return [];
 }
 
+/** Fetch image URL to data URL for reliable printing (avoids CORS/blank in print). */
+async function imageUrlToDataUrl(url: string): Promise<string | null> {
+  try {
+    const res = await fetch(url, { mode: "cors" });
+    if (!res.ok) return null;
+    const blob = await res.blob();
+    return await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    return null;
+  }
+}
+
 export function QrExportPanel({
   siteId,
+  siteName,
+  siteLogoUrl,
   rooms,
   baseUrl,
 }: {
   siteId: string;
+  siteName: string;
+  siteLogoUrl: string | null;
   rooms: RoomWithToken[];
   baseUrl: string;
 }) {
@@ -71,6 +100,8 @@ export function QrExportPanel({
     setGenerating(true);
     setExportError(null);
     try {
+      const logoDataUrl = siteLogoUrl ? await imageUrlToDataUrl(siteLogoUrl) : null;
+
       const cards = await Promise.all(
         roomsToExport.map(async (r) => {
           const url = `${baseUrl}/t/${r.room_tokens[0].token}`;
@@ -78,6 +109,10 @@ export function QrExportPanel({
           return { room_label: r.room_label, url, dataUrl };
         })
       );
+
+      const logoImg = logoDataUrl
+        ? `<img src="${logoDataUrl}" alt="${siteName}" class="card-logo" />`
+        : "";
 
       const printWindow = window.open("", "_blank");
       if (!printWindow) {
@@ -89,14 +124,17 @@ export function QrExportPanel({
       <!DOCTYPE html>
       <html>
         <head>
-          <title>QR Cards – ${siteId}</title>
+          <title>QR Cards – ${siteName}</title>
           <style>
             body { font-family: system-ui, sans-serif; padding: 16px; }
             .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; max-width: 800px; margin: 0 auto; }
             .card { border: 1px solid #ddd; padding: 20px; text-align: center; break-inside: avoid; }
-            .card h2 { margin: 0 0 12px; font-size: 24px; }
-            .card img { display: block; margin: 0 auto 8px; }
-            .card p { margin: 0; font-size: 12px; color: #666; }
+            .card-logo { max-height: 48px; max-width: 160px; object-fit: contain; margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto; }
+            .card-site { font-size: 11px; color: #555; margin-bottom: 4px; }
+            .card h2 { margin: 0 0 8px; font-size: 22px; }
+            .card .qr-img { display: block; margin: 8px auto; }
+            .card .instruction { font-size: 13px; color: #333; margin: 8px 0 4px; font-weight: 500; }
+            .card .sub { font-size: 11px; color: #666; margin: 0; }
             @media print { .grid { gap: 16px; } }
           </style>
         </head>
@@ -106,9 +144,12 @@ export function QrExportPanel({
               .map(
                 (c) => `
               <div class="card">
-                <h2>Room ${c.room_label}</h2>
-                <img src="${c.dataUrl}" alt="QR for room ${c.room_label}" width="180" height="180" />
-                <p>Scan for housekeeping help</p>
+                ${logoImg}
+                ${siteName ? `<p class="card-site">${escapeHtml(siteName)}</p>` : ""}
+                <h2>Room ${escapeHtml(c.room_label)}</h2>
+                <img src="${c.dataUrl}" alt="QR for room ${c.room_label}" class="qr-img" width="180" height="180" />
+                <p class="instruction">Scan to submit a cleaning request or review</p>
+                <p class="sub">Scan when you need housekeeping or want to leave feedback.</p>
               </div>
             `
               )
