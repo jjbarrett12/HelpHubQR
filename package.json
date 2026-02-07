@@ -1,0 +1,17 @@
+{
+  "name": "housekeeping-qr-tickets",
+  "private": true,
+  "workspaces": [
+    "apps/web"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=apps/web",
+    "dev:web": "cd apps/web && npm run dev",
+    "build": "npm run build --workspace=apps/web",
+    "start": "npm run start --workspace=apps/web",
+    "lint": "npm run lint --workspace=apps/web"
+  },
+  "dependencies": {
+    "install": "^0.13.0"
+  }
+}

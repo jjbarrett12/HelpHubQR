@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+    /* Gradient & border accent – light (soft gray) */
+    --app-bg: linear-gradient(160deg, #f1f5f9 0%, #e2e8f0 50%, #f8fafc 100%);
+    --sidebar-border: 239 84% 75%;
+    --card-border: 239 84% 80%;
+    --accent-border: 25 95% 53%;
+    --neon-red: #dc2626;
+    --neon-red-dim: #b91c1c;
+    --neon-glow: none;
+    --neon-text-glow: none;
+  }
+  .dark {
+    /* Red & black neon theme */
+    --background: 0 0% 4%;
+    --foreground: 0 0% 96%;
+    --card: 0 0% 6%;
+    --card-foreground: 0 0% 96%;
+    --popover: 0 0% 6%;
+    --popover-foreground: 0 0% 96%;
+    --primary: 350 100% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 96%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 350 80% 18%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 350 40% 18%;
+    --input: 350 30% 14%;
+    --ring: 350 100% 55%;
+    --app-bg: linear-gradient(165deg, #0a0a0a 0%, #0f0f0f 30%, #111 60%, #0a0a0a 100%);
+    --sidebar-border: 350 100% 50%;
+    --card-border: 350 90% 45%;
+    --accent-border: 350 100% 55%;
+    --neon-red: #ff1744;
+    --neon-red-dim: #cc0033;
+    --neon-glow: 0 0 12px hsl(350 100% 55% / 0.5), 0 0 24px hsl(350 100% 55% / 0.25);
+    --neon-text-glow: 0 0 8px hsl(350 100% 55% / 0.8), 0 0 16px hsl(350 100% 55% / 0.4);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply text-foreground antialiased;
+    background: var(--app-bg);
+    min-height: 100vh;
+  }
+}
+
+/* Accent borders – light (subtle); dark (neon red) */
+.border-accent {
+  border-color: hsl(var(--accent-border) / 0.6);
+}
+.dark .border-accent {
+  border-color: hsl(var(--accent-border) / 0.8);
+}
+.border-sidebar {
+  border-color: hsl(var(--sidebar-border));
+}
+.border-card-accent {
+  border-color: hsl(var(--card-border));
+}
+.dark .border-card-accent {
+  border-color: hsl(var(--card-border));
+}
+
+/* Neon glow – dark theme only */
+.dark .shadow-neon {
+  box-shadow: var(--neon-glow);
+}
+.dark .shadow-neon-sm {
+  box-shadow: 0 0 8px hsl(350 100% 55% / 0.4);
+}
+.dark .text-neon {
+  color: var(--neon-red);
+  text-shadow: var(--neon-text-glow);
+}
+.dark .ring-neon {
+  --tw-ring-color: hsl(350 100% 55% / 0.6);
+}
+.dark .border-neon {
+  border-color: hsl(var(--accent-border));
+  box-shadow: 0 0 10px hsl(350 100% 55% / 0.3);
+}
