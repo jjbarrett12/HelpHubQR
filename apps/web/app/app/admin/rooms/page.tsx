@@ -75,7 +75,9 @@ export default async function AdminRoomsPage({
         <div>
           <h2 className="text-sm font-medium text-muted-foreground mb-2">Add rooms by number range</h2>
           <AddRoomRangeForm siteId={siteId} />
-          <p className="text-xs text-muted-foreground mt-1">Type <strong>1-122</strong> in Quick range (or use From/To) to create 122 separate rooms (1, 2, 3 … 122), each with its own QR code. Then use Export QR to print e.g. room 57.</p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Easiest: type <strong>122</strong> in Quick add and click the button to create rooms 1–122 (or type <strong>1-122</strong>). No CSV needed. Then use Export QR to print by room.
+          </p>
         </div>
         <RoomCsvUploader siteId={siteId} />
         <QrExportPanel

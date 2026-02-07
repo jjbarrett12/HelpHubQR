@@ -10,15 +10,23 @@ import { Layers } from "lucide-react";
 
 const MAX_RANGE = 500;
 
-/** Parse "1-122" or "1 - 122" or "Room 1-122" into [from, to] or null. */
+/** Parse "122" → 1-122, or "1-122" / "1 - 122" into [from, to]. */
 function parseRangeInput(input: string): [number, number] | null {
   const trimmed = input.trim().replace(/\s*[-–—]\s*/g, "-");
-  const match = trimmed.match(/^(?:\D*)?(\d+)\s*-\s*(\d+)\s*$/);
-  if (!match) return null;
-  const from = parseInt(match[1], 10);
-  const to = parseInt(match[2], 10);
-  if (from < 1 || to < 1 || from > to) return null;
-  return [from, to];
+  const rangeMatch = trimmed.match(/^(?:\D*)?(\d+)\s*-\s*(\d+)\s*$/);
+  if (rangeMatch) {
+    const from = parseInt(rangeMatch[1], 10);
+    const to = parseInt(rangeMatch[2], 10);
+    if (from < 1 || to < 1 || from > to) return null;
+    return [from, to];
+  }
+  const singleMatch = trimmed.match(/^(\d+)$/);
+  if (singleMatch) {
+    const to = parseInt(singleMatch[1], 10);
+    if (to < 1) return null;
+    return [1, to];
+  }
+  return null;
 }
 
 function generateToken(): string {
@@ -41,10 +49,10 @@ export function AddRoomRangeForm({ siteId }: { siteId: string }) {
     e.preventDefault();
     let from: number;
     let to: number;
-    if (quickRange.trim()) {
+      if (quickRange.trim()) {
       const parsed = parseRangeInput(quickRange);
       if (!parsed) {
-        setError('Enter a range like "1-122" (two numbers with a hyphen).');
+        setError('Enter a number (e.g. 122) or range (e.g. 1-122).');
         return;
       }
       [from, to] = parsed;
@@ -112,14 +120,15 @@ export function AddRoomRangeForm({ siteId }: { siteId: string }) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-wrap items-end gap-3 p-4 rounded-lg border border-card-border bg-card/50">
       <div className="space-y-1">
-        <Label htmlFor="quick-range" className="text-xs">Quick range (e.g. 1-122)</Label>
+        <Label htmlFor="quick-range" className="text-xs">Quick add: just the count or range</Label>
         <Input
           id="quick-range"
           type="text"
           value={quickRange}
           onChange={(e) => { setQuickRange(e.target.value); setError(null); }}
-          placeholder="1-122"
-          className="w-32"
+          placeholder="122 or 1-122"
+          className="w-36"
+          title="Type 122 to create rooms 1–122, or 1-122 for the same"
         />
       </div>
       <div className="space-y-1">

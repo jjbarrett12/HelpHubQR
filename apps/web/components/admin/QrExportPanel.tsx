@@ -30,6 +30,15 @@ function escapeHtml(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
+/** Avoid "Room Room" when room_label is "Room" or empty; show "Room 57" when room_label is "57". */
+function formatRoomHeading(roomLabel: string): string {
+  const t = (roomLabel ?? "").trim();
+  if (!t) return "Room";
+  if (t.toLowerCase() === "room") return "Room";
+  if (/^room\s+/i.test(t)) return t;
+  return "Room " + t;
+}
+
 /** Normalize room_tokens to an array (Supabase can return array or single object; RSC may alter shape). */
 function getTokenList(room: RoomWithToken): { token: string }[] {
   const t = room.room_tokens;
@@ -146,7 +155,7 @@ export function QrExportPanel({
               <div class="card">
                 ${logoImg}
                 ${siteName ? `<p class="card-site">${escapeHtml(siteName)}</p>` : ""}
-                <h2>Room ${escapeHtml(c.room_label)}</h2>
+                <h2>${escapeHtml(formatRoomHeading(c.room_label))}</h2>
                 <img src="${c.dataUrl}" alt="QR for room ${c.room_label}" class="qr-img" width="180" height="180" />
                 <p class="instruction">Scan to submit a cleaning request or review</p>
                 <p class="sub">Scan when you need housekeeping or want to leave feedback.</p>
