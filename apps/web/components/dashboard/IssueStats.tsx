@@ -39,8 +39,8 @@ export async function IssueStats({ siteId }: { siteId: string }) {
   const resolvedToday = resolvedTodayCount ?? 0;
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-sm font-medium text-muted-foreground">Issue tracking</h2>
+    <section className="space-y-4" aria-labelledby="issue-stats-heading">
+      <h2 id="issue-stats-heading" className="text-sm font-medium text-muted-foreground">Issue tracking</h2>
       <div className="grid gap-3 sm:grid-cols-3">
         <Card className="border-card-border">
           <CardHeader className="flex flex-row items-center gap-2 pb-1">
@@ -97,6 +97,6 @@ export async function IssueStats({ siteId }: { siteId: string }) {
           </CardContent>
         </Card>
       )}
-    </div>
+    </section>
   );
 }

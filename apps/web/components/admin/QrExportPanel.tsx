@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import QRCode from "qrcode";
 import { Download } from "lucide-react";
+import { naturalCompare } from "@/lib/utils";
 
 type RoomWithToken = {
   id: string;
@@ -87,7 +88,8 @@ export function QrExportPanel({
   const withTokens = rooms
     .map((r) => ({ ...r, tokenList: getTokenList(r) }))
     .filter((r) => r.tokenList.length > 0)
-    .map((r) => ({ ...r, room_tokens: r.tokenList }));
+    .map((r) => ({ ...r, room_tokens: r.tokenList }))
+    .sort((a, b) => naturalCompare(a.room_label ?? "", b.room_label ?? ""));
 
   // Auto-select the only room when there's exactly one with a token
   useEffect(() => {
@@ -200,14 +202,14 @@ export function QrExportPanel({
       <CardHeader>
         <h2 className="text-lg font-medium">Export QR cards</h2>
         <p className="text-sm text-muted-foreground">
-          Choose which room(s) to export, then print or save as PDF.
+          To print one room: choose &quot;Single room&quot;, pick the room below, then click Print. To print all rooms with QR codes: choose &quot;All rooms&quot;.
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
         <div ref={printRef} className="hidden" />
         <div className="flex flex-wrap items-end gap-4">
           <div className="space-y-2">
-            <Label className="text-xs">Export</Label>
+            <Label className="text-xs font-medium">Export</Label>
             <Select
               value={exportMode}
               onValueChange={(v) => {
@@ -215,7 +217,7 @@ export function QrExportPanel({
                 if (v === "all") setSelectedRoomId("");
               }}
             >
-              <SelectTrigger className="w-[140px]">
+              <SelectTrigger className="w-[160px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -226,13 +228,13 @@ export function QrExportPanel({
           </div>
           {exportMode === "single" && (
             <div className="space-y-2">
-              <Label className="text-xs">Which room?</Label>
+              <Label className="text-xs font-medium">Which room to print?</Label>
               <Select
                 value={selectedRoomId}
                 onValueChange={setSelectedRoomId}
               >
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Select room…" />
+                <SelectTrigger className="w-[220px]">
+                  <SelectValue placeholder="Select a room…" />
                 </SelectTrigger>
                 <SelectContent>
                   {withTokens.map((r) => (

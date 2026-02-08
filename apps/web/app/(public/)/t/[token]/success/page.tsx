@@ -11,7 +11,7 @@ export default async function SuccessPage({
   const { token } = await params;
   return (
     <main className="min-h-screen bg-muted/30 flex flex-col items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md border-border shadow-sm">
         <CardHeader className="text-center">
           <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
             <CheckCircle2 className="h-8 w-8 text-primary" />

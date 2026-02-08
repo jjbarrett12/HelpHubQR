@@ -4,11 +4,13 @@ import { createClient } from "@/lib/supabase/server";
 export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { naturalCompare } from "@/lib/utils";
 import { RoomCsvUploader } from "@/components/admin/RoomCsvUploader";
 import { QrExportPanel } from "@/components/admin/QrExportPanel";
 import { AddLocationForm } from "@/components/admin/AddLocationForm";
 import { AddRoomRangeForm } from "@/components/admin/AddRoomRangeForm";
 import { GenerateTokenButton } from "@/components/admin/GenerateTokenButton";
+import { DeleteRoomButton } from "@/components/admin/DeleteRoomButton";
 
 export default async function AdminRoomsPage({
   searchParams,
@@ -48,24 +50,26 @@ export default async function AdminRoomsPage({
   const tokenByRoomId = new Map(
     (tokensRaw ?? []).map((t) => [t.room_id, t.token])
   );
-  const rooms = (roomsRaw ?? []).map((r) => ({
-    ...r,
-    room_tokens: tokenByRoomId.has(r.id)
-      ? [{ token: tokenByRoomId.get(r.id)! }]
-      : [],
-  }));
+  const rooms = (roomsRaw ?? [])
+    .map((r) => ({
+      ...r,
+      room_tokens: tokenByRoomId.has(r.id)
+        ? [{ token: tokenByRoomId.get(r.id)! }]
+        : [],
+    }))
+    .sort((a, b) => naturalCompare(a.room_label ?? "", b.room_label ?? ""));
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
   return (
     <div className="p-6 max-w-4xl">
-      <div className="flex items-center gap-2 mb-6">
+      <nav className="flex items-center gap-2 mb-6 flex-wrap" aria-label="Breadcrumb">
         <Button variant="ghost" size="sm" asChild>
-          <Link href="/app/admin/sites">Sites</Link>
+          <Link href="/app/admin/sites">Customers</Link>
         </Button>
         <span className="text-muted-foreground">/</span>
-        <h1 className="text-2xl font-semibold">{site.name} – Locations & QR</h1>
-      </div>
+        <h1 className="text-2xl font-semibold tracking-tight">{site.name} – Locations & QR</h1>
+      </nav>
 
       <div className="space-y-6">
         <div>
@@ -99,26 +103,36 @@ export default async function AdminRoomsPage({
               return (
                 <li
                   key={r.id}
-                  className="flex items-center justify-between px-4 py-2 text-sm"
+                  className="flex items-center justify-between gap-2 px-4 py-2 text-sm"
                 >
                   <span>
                     {r.room_label}
                     {r.floor ? ` (${r.floor})` : ""}
                     {!r.active && " – inactive"}
                   </span>
-                  {url ? (
-                    <code className="text-xs text-muted-foreground truncate max-w-[200px]">
-                      {url}
-                    </code>
-                  ) : (
-                    <GenerateTokenButton roomId={r.id} />
-                  )}
+                  <span className="flex items-center gap-2 shrink-0">
+                    {url ? (
+                      <code className="text-xs text-muted-foreground truncate max-w-[200px]">
+                        {url}
+                      </code>
+                    ) : (
+                      <GenerateTokenButton roomId={r.id} />
+                    )}
+                    <DeleteRoomButton
+                      roomId={r.id}
+                      siteId={siteId}
+                      roomLabel={r.room_label + (r.floor ? ` (${r.floor})` : "")}
+                    />
+                  </span>
                 </li>
               );
             })}
           </ul>
         ) : (
-          <p className="text-muted-foreground">No locations yet. Add one above or upload a CSV.</p>
+          <div className="rounded-lg border border-dashed border-border bg-muted/20 py-8 px-4 text-center">
+            <p className="font-medium text-foreground">No locations yet</p>
+            <p className="text-sm text-muted-foreground mt-1">Add a room above, use the range quick-add, or upload a CSV.</p>
+          </div>
         )}
       </div>
     </div>

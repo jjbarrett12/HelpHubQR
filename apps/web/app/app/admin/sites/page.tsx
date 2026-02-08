@@ -14,8 +14,15 @@ export default async function AdminSitesPage() {
 
   return (
     <div className="p-6 max-w-4xl">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold">Customers</h1>
+      <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
+        <div>
+          <nav className="text-sm text-muted-foreground mb-1" aria-label="Breadcrumb">
+            <Link href="/app" className="hover:text-foreground">Dashboard</Link>
+            <span className="mx-1">/</span>
+            <span className="text-foreground font-medium">Customers</span>
+          </nav>
+          <h1 className="text-2xl font-semibold tracking-tight">Customers</h1>
+        </div>
         <CreateSiteForm />
       </div>
       <div className="grid gap-4">
@@ -59,8 +66,11 @@ export default async function AdminSitesPage() {
         ))}
         {(!sites || sites.length === 0) && (
           <Card className="border-card-border border border-dashed">
-            <CardContent className="py-12 text-center text-muted-foreground">
-              No customers yet. Add one to get started.
+            <CardContent className="py-12 px-6 text-center">
+              <p className="font-medium text-foreground">No customers yet</p>
+              <p className="text-sm text-muted-foreground mt-1 max-w-sm mx-auto">
+                Add a customer (site) above to create rooms and QR codes, then view tickets from the dashboard.
+              </p>
             </CardContent>
           </Card>
         )}

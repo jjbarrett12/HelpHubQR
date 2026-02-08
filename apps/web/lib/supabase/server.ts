@@ -11,7 +11,7 @@ export async function createClient() {
       getAll() {
         return cookieStore.getAll();
       },
-      setAll(cookiesToSet) {
+      setAll(cookiesToSet: { name: string; value: string; options?: Record<string, unknown> }[]) {
         try {
           if (typeof cookieStore.set !== "function") return; // read-only (e.g. Server Component)
           cookiesToSet.forEach(({ name, value, options }) =>

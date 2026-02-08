@@ -20,6 +20,11 @@ export default async function TicketDetailPage({
     .single();
   if (!ticket) notFound();
 
+  type SiteRelation = { name: string } | { name: string }[] | null;
+  const rawSite = (ticket as { site?: SiteRelation }).site as SiteRelation;
+  const site: { name: string } =
+    Array.isArray(rawSite) ? rawSite[0] ?? { name: "" } : rawSite ?? { name: "" };
+
   const { data: events } = await supabase
     .from("ticket_events")
     .select("id, event_type, payload, created_at, actor_user_id")
@@ -31,7 +36,7 @@ export default async function TicketDetailPage({
       <TicketDetail
         ticket={{
           ...ticket,
-          site: (ticket as { site: { name: string } }).site,
+          site,
         }}
         events={events ?? []}
       />

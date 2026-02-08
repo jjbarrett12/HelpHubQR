@@ -31,8 +31,11 @@ export function TicketFilters({ siteId }: { siteId: string }) {
 
   return (
     <div className="flex gap-2 items-center">
+      <label htmlFor="ticket-status-filter" className="text-sm text-muted-foreground sr-only sm:not-sr-only sm:inline">
+        Filter by status
+      </label>
       <Select value={status} onValueChange={onStatusChange}>
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger id="ticket-status-filter" className="w-[180px]" aria-label="Filter tickets by status">
           <SelectValue placeholder="Status" />
         </SelectTrigger>
         <SelectContent>

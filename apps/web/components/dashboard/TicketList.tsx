@@ -21,9 +21,11 @@ export function TicketList({ siteId }: { siteId: string }) {
   const searchParams = useSearchParams();
   const statusFilter = searchParams.get("status") ?? "all";
   const [tickets, setTickets] = useState<TicketRow[]>([]);
+  const [loading, setLoading] = useState(true);
   const [channel, setChannel] = useState<RealtimeChannel | null>(null);
 
   useEffect(() => {
+    setLoading(true);
     const supabase = createClient();
 
     let query = supabase
@@ -40,6 +42,7 @@ export function TicketList({ siteId }: { siteId: string }) {
 
     query.then(({ data, error }) => {
       if (!error) setTickets((data as TicketRow[]) ?? []);
+      setLoading(false);
     });
 
     const ch = supabase
@@ -72,10 +75,21 @@ export function TicketList({ siteId }: { siteId: string }) {
     };
   }, [siteId, statusFilter]);
 
+  if (loading) {
+    return (
+      <div className="rounded-lg border border-border bg-muted/30 py-12 text-center">
+        <p className="text-sm text-muted-foreground">Loading tickets…</p>
+      </div>
+    );
+  }
+
   if (tickets.length === 0) {
     return (
-      <div className="text-muted-foreground text-center py-12">
-        No tickets yet. New requests will appear here in real time.
+      <div className="rounded-lg border border-dashed border-border bg-muted/20 py-12 px-4 text-center">
+        <p className="text-muted-foreground font-medium">No tickets yet</p>
+        <p className="text-sm text-muted-foreground mt-1">
+          When guests scan a room QR and submit a request, it will appear here in real time.
+        </p>
       </div>
     );
   }

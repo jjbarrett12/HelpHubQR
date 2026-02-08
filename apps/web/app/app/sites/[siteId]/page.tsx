@@ -20,14 +20,21 @@ export default async function SiteDashboardPage({
   if (!site) notFound();
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-8">
       <div className="flex items-center justify-between flex-wrap gap-2">
-        <h1 className="text-2xl font-semibold">{site.name}</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">{site.name}</h1>
         <EnablePushNotifications siteId={siteId} />
       </div>
       <IssueStats siteId={siteId} />
-      <TicketFilters siteId={siteId} />
-      <TicketList siteId={siteId} />
+      <section aria-labelledby="tickets-heading">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <h2 id="tickets-heading" className="text-lg font-medium text-foreground">
+            Tickets
+          </h2>
+          <TicketFilters siteId={siteId} />
+        </div>
+        <TicketList siteId={siteId} />
+      </section>
     </div>
   );
 }

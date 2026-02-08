@@ -23,8 +23,8 @@ const statusVariant: Record<string, "default" | "secondary" | "destructive" | "o
 
 export function TicketCard({ ticket }: { ticket: TicketRow }) {
   return (
-    <Link href={`/app/tickets/${ticket.id}`}>
-      <Card className="hover:bg-muted/50 transition-colors cursor-pointer border-card-border border-l-4 border-l-accent-border/40 shadow-sm">
+    <Link href={`/app/tickets/${ticket.id}`} className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-lg">
+      <Card className="hover:bg-muted/50 transition-colors cursor-pointer border-card-border border-l-4 border-l-accent-border/40 shadow-sm h-full">
         <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
           <span className="font-medium">Room {ticket.room_label_snapshot}</span>
           <div className="flex items-center gap-2">

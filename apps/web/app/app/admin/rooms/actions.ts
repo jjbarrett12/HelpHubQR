@@ -10,7 +10,7 @@ function generateToken(): string {
 
 export type GenerateTokenResult = { ok: true; alreadyExisted?: boolean } | { ok: false; error: string };
 
-export async function generateRoomToken(roomId: string): Promise<GenerateTokenResult> {
+export const generateRoomToken = async (roomId: string): Promise<GenerateTokenResult> => {
   const supabase = await createClient();
   const {
     data: { user },
@@ -32,4 +32,27 @@ export async function generateRoomToken(roomId: string): Promise<GenerateTokenRe
   if (error) return { ok: false, error: error.message };
   revalidatePath("/app/admin/rooms");
   return { ok: true };
-}
+};
+
+export type DeleteRoomResult = { ok: true } | { ok: false; error: string };
+
+export const deleteRoom = async (roomId: string, siteId: string): Promise<DeleteRoomResult> => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "Not authenticated" };
+
+  const { data: room } = await supabase
+    .from("rooms")
+    .select("id, site_id")
+    .eq("id", roomId)
+    .eq("site_id", siteId)
+    .single();
+  if (!room) return { ok: false, error: "Room not found or access denied" };
+
+  const { error } = await supabase.from("rooms").delete().eq("id", roomId);
+  if (error) return { ok: false, error: error.message };
+  revalidatePath("/app/admin/rooms");
+  return { ok: true };
+};

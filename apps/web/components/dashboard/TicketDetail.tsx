@@ -108,24 +108,31 @@ export function TicketDetail({
     router.refresh();
   }
 
+  const siteName = ticket.site?.name ?? "Queue";
+
   return (
     <div className="space-y-6">
-      <Button variant="ghost" size="sm" asChild>
+      <Button variant="ghost" size="sm" asChild className="text-muted-foreground hover:text-foreground">
         <a href={`/app/sites/${ticket.site_id}`}>
-          <ArrowLeft className="h-4 w-4 mr-1" />
-          Back to queue
+          <ArrowLeft className="h-4 w-4 mr-1 shrink-0" />
+          Back to {siteName}
         </a>
       </Button>
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0">
+      <Card className="border-card-border">
+        <CardHeader className="flex flex-row items-center justify-between gap-4 flex-wrap space-y-0">
           <div>
-            <h1 className="text-xl font-semibold">
+            <h1 className="text-xl font-semibold tracking-tight">
               Room {ticket.room_label_snapshot}
             </h1>
-            <p className="text-sm text-muted-foreground">{ticket.site.name}</p>
+            <p className="text-sm text-muted-foreground mt-0.5">{ticket.site?.name}</p>
           </div>
-          <Badge>{ticket.status.replace("_", " ")}</Badge>
+          <div className="flex items-center gap-2 flex-wrap">
+            <Badge variant="secondary">{ticket.status.replace("_", " ")}</Badge>
+            {ticket.priority && ticket.priority !== "normal" && (
+              <Badge variant="outline">Priority: {ticket.priority}</Badge>
+            )}
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           {ticket.request_type && (
@@ -189,27 +196,36 @@ export function TicketDetail({
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="border-card-border">
         <CardHeader>
           <h2 className="text-sm font-medium">Timeline</h2>
         </CardHeader>
         <CardContent>
-          <ul className="space-y-3 text-sm">
-            {events.map((ev) => (
-              <li key={ev.id} className="flex gap-2">
-                <span className="text-muted-foreground shrink-0">
-                  {formatDistanceToNow(new Date(ev.created_at), { addSuffix: true })}
-                </span>
-                <span>
-                  {ev.event_type === "created" && "Ticket created"}
-                  {ev.event_type === "assigned" && "Ticket claimed"}
-                  {ev.event_type === "status_changed" &&
-                    `Status: ${(ev.payload?.from as string) ?? "?"} → ${(ev.payload?.to as string) ?? "?"}`}
-                  {ev.event_type === "internal_note" &&
-                    `Note: ${(ev.payload?.note as string) ?? ""}`}
-                </span>
-              </li>
-            ))}
+          <ul className="space-y-4 text-sm" role="list">
+            {events.map((ev) => {
+              const label =
+                ev.event_type === "created"
+                  ? "Ticket created"
+                  : ev.event_type === "assigned"
+                    ? "Ticket claimed"
+                    : ev.event_type === "status_changed"
+                      ? `Status: ${(ev.payload?.from as string) ?? "?"} → ${(ev.payload?.to as string) ?? "?"}`
+                      : ev.event_type === "internal_note"
+                        ? "Internal note"
+                        : ev.event_type;
+              const noteBody = ev.event_type === "internal_note" ? (ev.payload?.note as string) : null;
+              return (
+                <li key={ev.id} className="flex gap-3">
+                  <span className="text-muted-foreground shrink-0 text-xs mt-0.5">
+                    {formatDistanceToNow(new Date(ev.created_at), { addSuffix: true })}
+                  </span>
+                  <span>
+                    <span className="font-medium text-foreground">{label}</span>
+                    {noteBody && <span className="block text-muted-foreground mt-0.5">{noteBody}</span>}
+                  </span>
+                </li>
+              );
+            })}
           </ul>
         </CardContent>
       </Card>

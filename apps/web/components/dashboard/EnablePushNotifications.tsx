@@ -58,7 +58,7 @@ export function EnablePushNotifications({ siteId }: { siteId: string }) {
 
       // Register our service worker so we control push
       const reg = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
-      await reg.ready;
+      await navigator.serviceWorker.ready;
 
       if (Notification.permission === "default") {
         const result = await Notification.requestPermission();
@@ -71,7 +71,7 @@ export function EnablePushNotifications({ siteId }: { siteId: string }) {
 
       const sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) as BufferSource,
       });
       const subscription = {
         endpoint: sub.endpoint,

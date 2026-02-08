@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 
 const LOGO_BUCKET = "site-logos";
 
-export async function createSite(formData: FormData) {
+export const createSite = async (formData: FormData) => {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Not authenticated" };
@@ -52,4 +52,4 @@ export async function createSite(formData: FormData) {
   revalidatePath("/app/admin/sites");
   revalidatePath("/app");
   return { ok: true };
-}
+};
