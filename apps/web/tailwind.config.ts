@@ -36,8 +36,8 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
       boxShadow: {
-        neon: "0 0 12px hsl(350 100% 55% / 0.5), 0 0 24px hsl(350 100% 55% / 0.25)",
-        "neon-sm": "0 0 8px hsl(350 100% 55% / 0.4)",
+        neon: "0 0 20px hsl(252 68% 65% / 0.25)",
+        "neon-sm": "0 0 8px hsl(252 68% 65% / 0.3)",
       },
     },
   },

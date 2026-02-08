@@ -33,36 +33,46 @@
     --neon-red-dim: #b91c1c;
     --neon-glow: none;
     --neon-text-glow: none;
+    --positive: 142 71% 45%;
+    --positive-muted: 142 40% 92%;
+    --negative: 0 72% 51%;
+    --negative-muted: 0 40% 95%;
   }
   .dark {
-    /* Red & black neon theme */
-    --background: 0 0% 4%;
-    --foreground: 0 0% 96%;
-    --card: 0 0% 6%;
-    --card-foreground: 0 0% 96%;
-    --popover: 0 0% 6%;
-    --popover-foreground: 0 0% 96%;
-    --primary: 350 100% 55%;
+    /* Dashdark X–style: deep blue base, purple primary, green/red for status */
+    --background: 235 28% 18%;
+    --foreground: 0 0% 98%;
+    --card: 235 26% 23%;
+    --card-foreground: 0 0% 98%;
+    --popover: 235 26% 23%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 252 68% 65%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 12%;
+    --secondary: 235 22% 27%;
     --secondary-foreground: 0 0% 96%;
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 60%;
-    --accent: 350 80% 18%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 72% 45%;
+    --muted: 235 22% 27%;
+    --muted-foreground: 220 10% 65%;
+    --accent: 252 68% 65%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 348 52% 66%;
     --destructive-foreground: 0 0% 98%;
-    --border: 350 40% 18%;
-    --input: 350 30% 14%;
-    --ring: 350 100% 55%;
-    --app-bg: linear-gradient(165deg, #0a0a0a 0%, #0f0f0f 30%, #111 60%, #0a0a0a 100%);
-    --sidebar-border: 350 100% 50%;
-    --card-border: 350 90% 45%;
-    --accent-border: 350 100% 55%;
-    --neon-red: #ff1744;
-    --neon-red-dim: #cc0033;
-    --neon-glow: 0 0 12px hsl(350 100% 55% / 0.5), 0 0 24px hsl(350 100% 55% / 0.25);
-    --neon-text-glow: 0 0 8px hsl(350 100% 55% / 0.8), 0 0 16px hsl(350 100% 55% / 0.4);
+    --border: 235 22% 32%;
+    --input: 235 24% 26%;
+    --ring: 252 68% 65%;
+    --app-bg: #22243c;
+    --sidebar-bg: #1a1b2c;
+    --card-bg: #2b2d49;
+    --sidebar-border: 235 22% 35%;
+    --card-border: 235 22% 35%;
+    --accent-border: 252 68% 65%;
+    --positive: 131 52% 67%;
+    --positive-muted: 158 23% 24%;
+    --negative: 348 52% 66%;
+    --negative-muted: 340 24% 25%;
+    --neon-red: hsl(252 68% 65%);
+    --neon-red-dim: hsl(252 55% 55%);
+    --neon-glow: 0 0 20px hsl(252 68% 65% / 0.25);
+    --neon-text-glow: none;
   }
 }
 
@@ -94,21 +104,41 @@
   border-color: hsl(var(--card-border));
 }
 
-/* Neon glow – dark theme only */
+/* Dark: sidebar and main area use distinct blues */
+.dark .bg-sidebar-dark {
+  background-color: var(--sidebar-bg);
+}
+.dark .bg-app-dark {
+  background-color: var(--app-bg);
+}
+
+/* Primary accent glow – dark (purple) */
 .dark .shadow-neon {
   box-shadow: var(--neon-glow);
 }
 .dark .shadow-neon-sm {
-  box-shadow: 0 0 8px hsl(350 100% 55% / 0.4);
+  box-shadow: 0 0 8px hsl(252 68% 65% / 0.3);
 }
 .dark .text-neon {
-  color: var(--neon-red);
-  text-shadow: var(--neon-text-glow);
+  color: hsl(var(--primary));
 }
 .dark .ring-neon {
-  --tw-ring-color: hsl(350 100% 55% / 0.6);
+  --tw-ring-color: hsl(252 68% 65% / 0.5);
 }
 .dark .border-neon {
   border-color: hsl(var(--accent-border));
-  box-shadow: 0 0 10px hsl(350 100% 55% / 0.3);
+}
+
+/* Positive/negative (e.g. stats, badges) */
+.dark .text-positive {
+  color: hsl(var(--positive));
+}
+.dark .bg-positive-muted {
+  background-color: hsl(var(--positive-muted));
+}
+.dark .text-negative {
+  color: hsl(var(--negative));
+}
+.dark .bg-negative-muted {
+  background-color: hsl(var(--negative-muted));
 }

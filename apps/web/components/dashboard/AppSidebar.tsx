@@ -13,9 +13,9 @@ export async function AppSidebar() {
   const siteList = sites ?? [];
 
   return (
-    <aside className="w-56 border-r border-sidebar bg-card/80 backdrop-blur-sm flex flex-col shadow-sm border-accent-border/20 dark:shadow-neon-sm dark:border-primary/40">
-      <div className="p-4 border-b border-sidebar flex items-center justify-between dark:border-primary/30">
-        <Link href="/app" className="font-semibold flex items-center gap-2 text-primary dark:text-neon focus:outline-none focus:ring-2 focus:ring-ring rounded-md">
+    <aside className="w-56 border-r border-sidebar bg-card/80 backdrop-blur-sm flex flex-col shadow-sm dark:bg-sidebar-dark dark:border-border">
+      <div className="p-4 border-b border-sidebar flex items-center justify-between dark:border-border">
+        <Link href="/app" className="font-semibold flex items-center gap-2 text-primary focus:outline-none focus:ring-2 focus:ring-ring rounded-md">
           <LayoutDashboard className="h-5 w-5 shrink-0" />
           HelpHub
         </Link>
