@@ -80,6 +80,17 @@ To enable “Enable push notifications” on the site dashboard:
 - **Web:** Vercel (or any Next host). Set env vars and `NEXT_PUBLIC_APP_URL` to your domain.
 - **DB + Auth + Realtime + Functions:** Supabase (already in the cloud when you create the project).
 
+### Vercel: fix 404 (monorepo)
+
+The app lives in **`apps/web`**, not the repo root. If **helphubqr.com** (or your Vercel URL) shows **404**:
+
+1. Open [Vercel Dashboard](https://vercel.com) → your **HelpHubQR** project.
+2. Go to **Settings** → **General**.
+3. Under **Root Directory**, click **Edit**, set to **`apps/web`**, then **Save**.
+4. Go to **Deployments** → open the **…** on the latest deployment → **Redeploy** (or push a new commit to trigger a deploy).
+
+After the new deploy finishes, your domain should load the app.
+
 ### Using your domain (production)
 
 1. **App URL** – In `apps/web/.env.local` (and in your host’s env, e.g. Vercel), set:

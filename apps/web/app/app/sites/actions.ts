@@ -32,7 +32,8 @@ export async function createTicketForRoom(
 
   if (roomError || !room) return { ok: false, error: "Room not found or access denied" };
 
-  const site = room.site as { tenant_id: string } | null;
+  const siteRow = room.site as { tenant_id: string }[] | { tenant_id: string } | null;
+  const site = Array.isArray(siteRow) ? siteRow[0] ?? null : siteRow;
   if (!site) return { ok: false, error: "Site not found" };
 
   const { data: ticket, error: ticketError } = await supabase

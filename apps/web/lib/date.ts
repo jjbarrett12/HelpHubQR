@@ -1,4 +1,4 @@
-import { zonedTimeToUtc } from "date-fns-tz";
+import { fromZonedTime } from "date-fns-tz/fromZonedTime";
 
 /** Default app timezone: Mountain (MST/MDT). */
 export const DEFAULT_TIMEZONE = "America/Denver";
@@ -7,7 +7,7 @@ export const DEFAULT_TIMEZONE = "America/Denver";
 export function startOfTodayISO(): string {
   const today = new Date();
   const dateStr = today.toLocaleDateString("en-CA", { timeZone: DEFAULT_TIMEZONE }); // YYYY-MM-DD
-  const start = zonedTimeToUtc(`${dateStr} 00:00:00`, DEFAULT_TIMEZONE);
+  const start = fromZonedTime(`${dateStr}T00:00:00`, DEFAULT_TIMEZONE);
   return start.toISOString();
 }
 
