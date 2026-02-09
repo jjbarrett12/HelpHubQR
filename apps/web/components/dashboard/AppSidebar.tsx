@@ -24,7 +24,7 @@ export async function AppSidebar() {
               alt="Vanguard"
               width={100}
               height={44}
-              className="h-9 w-auto object-contain shrink-0 dark:[filter:invert(1)_hue-rotate(120deg)]"
+              className="h-9 w-auto object-contain shrink-0 dark:[filter:invert(1)_hue-rotate(180deg)]"
             />
           </Link>
           <ThemeToggle />

@@ -31,13 +31,12 @@ function escapeHtml(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
-/** Show exactly one "Room" – avoid "Room Room". Use label as-is if it already starts with "room", else "Room " + label. */
+/** Show exactly one "Room" – avoid "Room Room 5". Use label as-is if it already starts with "room", else "Room " + label. */
 function formatRoomHeading(roomLabel: string): string {
   const t = (roomLabel ?? "").trim();
   if (!t) return "Room";
-  const lower = t.toLowerCase();
-  if (lower === "room") return "Room";
-  if (lower.startsWith("room ")) return t.charAt(0).toUpperCase() + t.slice(1);
+  const normalized = t.replace(/\s+/g, " ").toLowerCase();
+  if (normalized === "room" || normalized.startsWith("room ")) return t;
   return "Room " + t;
 }
 
