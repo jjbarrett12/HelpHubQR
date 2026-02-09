@@ -54,7 +54,7 @@ serve(async (req) => {
       );
     }
 
-    const dashboardUrl = process.env.DASHBOARD_URL || process.env.NEXT_PUBLIC_APP_URL || "https://app.example.com";
+    const dashboardUrl = process.env.DASHBOARD_URL || process.env.NEXT_PUBLIC_APP_URL || "https://app.example.com"; // Set DASHBOARD_URL in Edge Function secrets to your production domain
     const viewPath = `/app/tickets/${ticket_id}`;
     const viewUrl = dashboardUrl.startsWith("http") ? `${dashboardUrl}${viewPath}` : `https://${dashboardUrl}${viewPath}`;
     const shortNote = ticket.note?.slice(0, 80) || "";

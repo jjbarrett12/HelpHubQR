@@ -80,6 +80,20 @@ To enable “Enable push notifications” on the site dashboard:
 - **Web:** Vercel (or any Next host). Set env vars and `NEXT_PUBLIC_APP_URL` to your domain.
 - **DB + Auth + Realtime + Functions:** Supabase (already in the cloud when you create the project).
 
+### Using your domain (production)
+
+1. **App URL** – In `apps/web/.env.local` (and in your host’s env, e.g. Vercel), set:
+   ```bash
+   NEXT_PUBLIC_APP_URL=https://yourdomain.com
+   ```
+   Use your actual domain (e.g. `https://helphub.yourcompany.com`). This is used for QR links and redirects.
+
+2. **Alert links** – In Supabase Dashboard → Edge Functions → Secrets, set:
+   ```bash
+   DASHBOARD_URL=https://yourdomain.com
+   ```
+   Use the same URL so alert emails/SMS link to the correct dashboard.
+
 ## Troubleshooting
 
 **Clean reinstall (PowerShell):**

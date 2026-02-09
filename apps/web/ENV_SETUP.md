@@ -22,6 +22,8 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...paste_the_long_anon_key_here...
 NEXT_PUBLIC_APP_URL=http://localhost:3010
 ```
 
+- **Local dev:** keep `NEXT_PUBLIC_APP_URL=http://localhost:3010`.
+- **Production:** set `NEXT_PUBLIC_APP_URL=https://yourdomain.com` (your actual domain).
 - No quotes around the values.
 - No spaces around the `=` sign.
 - Save the file, then restart the dev server: `npm run dev`.
