@@ -22,11 +22,11 @@ export default function LoginPage() {
       <div className="w-full max-w-sm space-y-5">
         <div className="flex justify-center [&_img]:drop-shadow-[0_0_20px_rgba(0,0,0,0.5)]">
           <Image
-            src="/vanguard-logo.png"
-            alt="Vanguard Cleaning Systems"
-            width={320}
-            height={140}
-            className="object-contain"
+            src="/helphub-logo.png"
+            alt="HelpHub"
+            width={280}
+            height={80}
+            className="object-contain w-full max-w-[280px]"
             priority
           />
         </div>

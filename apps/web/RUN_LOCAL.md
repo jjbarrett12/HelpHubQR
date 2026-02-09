@@ -15,7 +15,7 @@
    **http://localhost:3010**
 
 4. You should see either:
-   - A redirect to the **login page** (Vanguard logo + "Staff sign in"), or
+   - A redirect to the **login page** (HelpHub logo + "Staff sign in"), or
    - The **HelpHub** home with a "Go to login" button.
 
 If the page is blank:

@@ -33,6 +33,9 @@ export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith("/app") && !user) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
+  if (request.nextUrl.pathname.startsWith("/platform-admin") && !user) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
   if (request.nextUrl.pathname === "/login" && user) {
     return NextResponse.redirect(new URL("/app", request.url));
   }
@@ -41,5 +44,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/app/:path*"],
+  matcher: ["/app/:path*", "/platform-admin/:path*"],
 };
