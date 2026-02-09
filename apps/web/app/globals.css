@@ -10,28 +10,28 @@
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
+    --primary: 350 100% 48%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 350 30% 96%;
+    --secondary-foreground: 350 80% 25%;
+    --muted: 350 20% 96%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 350 80% 96%;
+    --accent-foreground: 350 100% 35%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 350 20% 90%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 350 100% 48%;
     --radius: 0.5rem;
-    /* Gradient & border accent – light (soft gray) */
-    --app-bg: linear-gradient(160deg, #f1f5f9 0%, #e2e8f0 50%, #f8fafc 100%);
-    --sidebar-border: 239 84% 75%;
-    --card-border: 239 84% 80%;
-    --accent-border: 25 95% 53%;
+    /* Light: white/gray base with neon red accents */
+    --app-bg: linear-gradient(160deg, #fef2f2 0%, #f1f5f9 50%, #f8fafc 100%);
+    --sidebar-border: 350 100% 65%;
+    --card-border: 350 90% 75%;
+    --accent-border: 350 100% 48%;
     --neon-red: #dc2626;
     --neon-red-dim: #b91c1c;
-    --neon-glow: none;
+    --neon-glow: 0 0 12px hsl(350 100% 48% / 0.25);
     --neon-text-glow: none;
     --positive: 142 71% 45%;
     --positive-muted: 142 40% 92%;
@@ -39,40 +39,40 @@
     --negative-muted: 0 40% 95%;
   }
   .dark {
-    /* Dashdark X–style: deep blue base, purple primary, green/red for status */
-    --background: 235 28% 18%;
+    /* Neon red & black – high contrast so text is always visible */
+    --background: 0 0% 6%;
     --foreground: 0 0% 98%;
-    --card: 235 26% 23%;
+    --card: 0 0% 8%;
     --card-foreground: 0 0% 98%;
-    --popover: 235 26% 23%;
+    --popover: 0 0% 8%;
     --popover-foreground: 0 0% 98%;
-    --primary: 252 68% 65%;
+    --primary: 350 100% 55%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 235 22% 27%;
+    --secondary: 0 0% 14%;
     --secondary-foreground: 0 0% 96%;
-    --muted: 235 22% 27%;
-    --muted-foreground: 220 10% 65%;
-    --accent: 252 68% 65%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 348 52% 66%;
+    --muted: 0 0% 14%;
+    --muted-foreground: 0 0% 78%;
+    --accent: 350 80% 18%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 72% 50%;
     --destructive-foreground: 0 0% 98%;
-    --border: 235 22% 32%;
-    --input: 235 24% 26%;
-    --ring: 252 68% 65%;
-    --app-bg: #22243c;
-    --sidebar-bg: #1a1b2c;
-    --card-bg: #2b2d49;
-    --sidebar-border: 235 22% 35%;
-    --card-border: 235 22% 35%;
-    --accent-border: 252 68% 65%;
+    --border: 350 30% 20%;
+    --input: 350 25% 16%;
+    --ring: 350 100% 55%;
+    --app-bg: #0a0a0a;
+    --sidebar-bg: #050505;
+    --card-bg: #0f0f0f;
+    --sidebar-border: 350 100% 50%;
+    --card-border: 350 90% 45%;
+    --accent-border: 350 100% 55%;
     --positive: 131 52% 67%;
     --positive-muted: 158 23% 24%;
     --negative: 348 52% 66%;
     --negative-muted: 340 24% 25%;
-    --neon-red: hsl(252 68% 65%);
-    --neon-red-dim: hsl(252 55% 55%);
-    --neon-glow: 0 0 20px hsl(252 68% 65% / 0.25);
-    --neon-text-glow: none;
+    --neon-red: #ff1744;
+    --neon-red-dim: #cc0033;
+    --neon-glow: 0 0 12px hsl(350 100% 55% / 0.5), 0 0 24px hsl(350 100% 55% / 0.25);
+    --neon-text-glow: 0 0 8px hsl(350 100% 55% / 0.6);
   }
 }
 
@@ -87,12 +87,17 @@
   }
 }
 
-/* Accent borders – light (subtle); dark (neon red) */
+/* Accent borders – light and dark use neon red */
 .border-accent {
-  border-color: hsl(var(--accent-border) / 0.6);
+  border-color: hsl(var(--accent-border) / 0.8);
 }
 .dark .border-accent {
   border-color: hsl(var(--accent-border) / 0.8);
+}
+
+/* Neon red branding – light and dark */
+.text-neon {
+  color: var(--neon-red);
 }
 .border-sidebar {
   border-color: hsl(var(--sidebar-border));
@@ -104,7 +109,7 @@
   border-color: hsl(var(--card-border));
 }
 
-/* Dark: sidebar and main area use distinct blues */
+/* Dark: sidebar and main – black with neon red accents */
 .dark .bg-sidebar-dark {
   background-color: var(--sidebar-bg);
 }
@@ -112,21 +117,23 @@
   background-color: var(--app-bg);
 }
 
-/* Primary accent glow – dark (purple) */
+/* Neon red glow – dark theme */
 .dark .shadow-neon {
   box-shadow: var(--neon-glow);
 }
 .dark .shadow-neon-sm {
-  box-shadow: 0 0 8px hsl(252 68% 65% / 0.3);
+  box-shadow: 0 0 8px hsl(350 100% 55% / 0.4);
 }
 .dark .text-neon {
-  color: hsl(var(--primary));
+  color: var(--neon-red);
+  text-shadow: var(--neon-text-glow);
 }
 .dark .ring-neon {
-  --tw-ring-color: hsl(252 68% 65% / 0.5);
+  --tw-ring-color: hsl(350 100% 55% / 0.6);
 }
 .dark .border-neon {
   border-color: hsl(var(--accent-border));
+  box-shadow: 0 0 10px hsl(350 100% 55% / 0.3);
 }
 
 /* Positive/negative (e.g. stats, badges) */

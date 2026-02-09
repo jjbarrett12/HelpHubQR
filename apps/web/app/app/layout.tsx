@@ -13,9 +13,9 @@ export default async function AppLayout({
     redirect("/login");
   }
   return (
-    <div className="flex min-h-screen bg-transparent">
+    <div className="flex min-h-screen bg-[var(--app-bg)]">
       <AppSidebar />
-      <main className="flex-1 overflow-auto border-l border-sidebar min-h-screen bg-card/30 dark:bg-app-dark border-card-border focus:outline-none" aria-label="Main content">
+      <main className="flex-1 overflow-auto border-l border-sidebar min-h-screen bg-[var(--app-bg)] border-border text-foreground focus:outline-none" aria-label="Main content">
         {children}
       </main>
     </div>

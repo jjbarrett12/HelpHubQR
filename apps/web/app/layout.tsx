@@ -17,7 +17,7 @@ export default function RootLayout({
       <head>
         <ThemeScript />
       </head>
-      <body className="min-h-screen bg-[var(--app-bg)] text-foreground antialiased" style={{ background: "var(--app-bg)" }}>
+      <body className="min-h-screen text-foreground antialiased" style={{ margin: 0 }}>
         {children}
       </body>
     </html>

@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3006",
+    "dev": "next dev -p 3011",
+    "dev:3010": "next dev -p 3010",
+    "dev:fresh": "npx --yes kill-port 3011 2>nul; next dev -p 3011",
     "clean": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true})\"",
     "build": "next build",
     "start": "next start",
@@ -21,13 +23,14 @@
     "@supabase/supabase-js": "^2.47.10",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "date-fns-tz": "^3.2.0",
     "lucide-react": "^0.460.0",
     "next": "14.2.18",
     "qrcode": "^1.5.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "tailwind-merge": "^2.5.4",
-    "date-fns": "^4.1.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

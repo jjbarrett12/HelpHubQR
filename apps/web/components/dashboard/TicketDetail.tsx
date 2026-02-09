@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { formatDistanceToNow } from "date-fns";
 import { ArrowLeft, UserPlus, MessageSquare } from "lucide-react";
+import { formatRoomDisplay } from "@/lib/utils";
 
 type Ticket = {
   id: string;
@@ -123,7 +124,7 @@ export function TicketDetail({
         <CardHeader className="flex flex-row items-center justify-between gap-4 flex-wrap space-y-0">
           <div>
             <h1 className="text-xl font-semibold tracking-tight">
-              Room {ticket.room_label_snapshot}
+              {formatRoomDisplay(ticket.room_label_snapshot)}
             </h1>
             <p className="text-sm text-muted-foreground mt-0.5">{ticket.site?.name}</p>
           </div>

@@ -4,6 +4,8 @@ import { TicketList } from "@/components/dashboard/TicketList";
 import { TicketFilters } from "@/components/dashboard/TicketFilters";
 import { IssueStats } from "@/components/dashboard/IssueStats";
 import { EnablePushNotifications } from "@/components/dashboard/EnablePushNotifications";
+import { AddTicketDialog } from "@/components/dashboard/AddTicketDialog";
+import { naturalCompare } from "@/lib/utils";
 
 export default async function SiteDashboardPage({
   params,
@@ -19,6 +21,15 @@ export default async function SiteDashboardPage({
     .single();
   if (!site) notFound();
 
+  const { data: roomsRaw } = await supabase
+    .from("rooms")
+    .select("id, room_label")
+    .eq("site_id", siteId)
+    .order("room_label");
+  const rooms = (roomsRaw ?? []).sort((a, b) =>
+    naturalCompare(a.room_label ?? "", b.room_label ?? "")
+  );
+
   return (
     <div className="p-6 space-y-8">
       <div className="flex items-center justify-between flex-wrap gap-2">
@@ -31,7 +42,14 @@ export default async function SiteDashboardPage({
           <h2 id="tickets-heading" className="text-lg font-medium text-foreground">
             Tickets
           </h2>
-          <TicketFilters siteId={siteId} />
+          <div className="flex items-center gap-2">
+            <AddTicketDialog
+              siteId={siteId}
+              siteName={site.name}
+              rooms={rooms}
+            />
+            <TicketFilters siteId={siteId} />
+          </div>
         </div>
         <TicketList siteId={siteId} />
       </section>

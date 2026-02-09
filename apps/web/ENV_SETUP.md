@@ -19,7 +19,7 @@ Open `apps/web/.env.local` and set:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...paste_the_long_anon_key_here...
-NEXT_PUBLIC_APP_URL=http://localhost:3001
+NEXT_PUBLIC_APP_URL=http://localhost:3010
 ```
 
 - No quotes around the values.

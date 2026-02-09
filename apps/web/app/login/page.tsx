@@ -1,7 +1,6 @@
 import Image from "next/image";
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import { LoginForm } from "@/components/auth/LoginForm";
+import { LoginRedirect } from "@/components/LoginRedirect";
 
 const isSupabaseConfigured = () =>
   Boolean(
@@ -9,12 +8,11 @@ const isSupabaseConfigured = () =>
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   );
 
-export default async function LoginPage() {
+export default function LoginPage() {
   const configured = isSupabaseConfigured();
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (user) redirect("/app");
   return (
+    <>
+      <LoginRedirect />
     <main
       className="min-h-screen flex flex-col items-center pt-[12vh] p-4"
       style={{
@@ -51,5 +49,6 @@ export default async function LoginPage() {
         </div>
       </div>
     </main>
+    </>
   );
 }

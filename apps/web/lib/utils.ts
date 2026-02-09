@@ -5,6 +5,14 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/** Show room label with a single "Room" prefix (avoids "Room Room4" when label is "Room4"). */
+export function formatRoomDisplay(roomLabel: string | null | undefined): string {
+  const s = (roomLabel ?? "").trim();
+  if (!s) return "Room";
+  const m = s.match(/^Room\s*(.*)$/i);
+  return m ? "Room " + (m[1] ?? "").trim() : "Room " + s;
+}
+
 /** Compare two strings in natural order (e.g. Room 2 before Room 10). */
 export function naturalCompare(a: string, b: string): number {
   const segsA = (a ?? "").split(/(\d+)/);

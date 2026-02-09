@@ -1,6 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+const AUTH_TIMEOUT_MS = 5000;
+
 export async function middleware(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
@@ -21,7 +23,12 @@ export async function middleware(request: NextRequest) {
     },
   });
 
-  const { data: { user } } = await supabase.auth.getUser();
+  // Don't hang forever if Supabase is slow/unreachable
+  const userPromise = supabase.auth.getUser().then(({ data: { user } }) => user);
+  const timeoutPromise = new Promise<null>((resolve) =>
+    setTimeout(() => resolve(null), AUTH_TIMEOUT_MS)
+  );
+  const user = await Promise.race([userPromise, timeoutPromise]);
 
   if (request.nextUrl.pathname.startsWith("/app") && !user) {
     return NextResponse.redirect(new URL("/login", request.url));
@@ -34,5 +41,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/app/:path*", "/login"],
+  matcher: ["/app/:path*"],
 };

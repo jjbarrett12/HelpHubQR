@@ -22,7 +22,7 @@ Room-specific QR codes for housekeeping requests. Guests scan a QR in the room, 
 2. **App**
    - Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and optionally `NEXT_PUBLIC_APP_URL`.
    - From repo root: `npm install` then `npm run dev`.
-   - Open `http://localhost:3000` → redirects to `/login`. Sign up (first user becomes admin of default tenant).
+   - Open `http://localhost:3010` → redirects to `/login`. Sign up (first user becomes admin of default tenant).
 
 3. **Flow**
    - **Admin:** Create a site → go to Rooms & QR → upload CSV (columns: `room` or `room_label`, optional `floor`) → tokens are generated → use “Print / Save as PDF” for QR cards.
@@ -96,7 +96,7 @@ npm run dev
 
 **App “doesn’t work” or blank / 500:**
 1. **Migrations** – Your `.env.local` points at project `zyahhdnjvychctgxvppa`. Run **both** SQL files in `supabase/migrations/` in that project’s Supabase **SQL Editor** (same project as in the URL). If you ran them on a different project before, run them again on this one.
-2. **Run from app folder** – From repo root: `cd apps/web` then `npm run dev`. Open **http://localhost:3000** (or the port shown in the terminal).
+2. **Run from app folder** – From repo root: `cd apps/web` then `npm run dev`. Open **http://localhost:3010** (or the port shown in the terminal).
 3. **Sign up first** – On the login page click **“Sign up”**, create an account, then sign in. The first user becomes admin.
 4. **Check the terminal** – If you see “Internal Server Error”, read the stack trace in the same terminal where `npm run dev` is running; that message usually explains the failure.
 

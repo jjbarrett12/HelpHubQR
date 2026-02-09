@@ -1,12 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { AlertCircle, CheckCircle, Inbox } from "lucide-react";
+import { startOfTodayISO, formatInDefaultTZ } from "@/lib/date";
 
 export async function IssueStats({ siteId }: { siteId: string }) {
   const supabase = await createClient();
-  const today = new Date();
-  today.setUTCHours(0, 0, 0, 0);
-  const todayIso = today.toISOString();
+  const todayIso = startOfTodayISO();
 
   const [{ count: openCount }, { count: newTodayCount }, { count: resolvedTodayCount }, { data: dailyStats }] = await Promise.all([
     supabase
@@ -83,10 +82,7 @@ export async function IssueStats({ siteId }: { siteId: string }) {
               {dailyStats.map((row) => (
                 <li key={row.stat_date} className="flex gap-2">
                   <span className="text-muted-foreground">
-                    {new Date(row.stat_date + "Z").toLocaleDateString(undefined, {
-                      month: "short",
-                      day: "numeric",
-                    })}
+                    {formatInDefaultTZ(row.stat_date + "Z", { month: "short", day: "numeric" })}
                   </span>
                   <span>
                     <strong>{row.issues_incoming}</strong> / {row.issues_resolved}
