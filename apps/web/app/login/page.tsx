@@ -16,7 +16,7 @@ export default function LoginPage() {
     <main
       className="min-h-screen flex flex-col items-center pt-[12vh] p-4"
       style={{
-        background: "linear-gradient(152deg, #2a1515 0%, #4a2020 25%, #6b2828 50%, #8b3030 65%, #5a2525 85%, #3a1818 100%)",
+        background: "linear-gradient(152deg, #e0f2fe 0%, #bae6fd 25%, #7dd3fc 50%, #38bdf8 65%, #0ea5e9 85%, #0284c7 100%)",
       }}
     >
       <div className="w-full max-w-sm space-y-5">

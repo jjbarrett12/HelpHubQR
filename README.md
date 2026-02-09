@@ -11,6 +11,8 @@ Room-specific QR codes for housekeeping requests. Guests scan a QR in the room, 
 
 ## Quick start
 
+- **Git fix (index.lock) + run dev:** see [DEV.md](DEV.md) for project folder path, Git fix steps, and run-dev command.
+
 1. **Supabase**
    - Create a project at [supabase.com](https://supabase.com).
    - Run migrations: `supabase db push` or run the SQL in `supabase/migrations/` in the SQL editor.

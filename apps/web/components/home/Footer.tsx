@@ -29,7 +29,7 @@ export function Footer() {
                 alt="HelpHub"
                 width={140}
                 height={40}
-                className="h-8 w-auto dark:brightness-0 dark:invert"
+                className="h-8 w-auto object-contain"
               />
             </Link>
             <p className="mt-4 max-w-xs text-sm text-muted-foreground">

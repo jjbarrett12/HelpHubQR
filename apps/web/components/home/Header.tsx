@@ -21,7 +21,7 @@ export function Header() {
             alt="HelpHub"
             width={140}
             height={40}
-            className="h-8 w-auto dark:brightness-0 dark:invert"
+            className="h-8 w-auto object-contain"
           />
         </Link>
         <nav className="hidden items-center gap-8 md:flex">

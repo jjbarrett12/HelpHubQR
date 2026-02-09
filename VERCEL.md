@@ -17,9 +17,18 @@ If **helphubqr.com** (or your `.vercel.app` URL) shows **404**, the project is b
 
 After the new deployment finishes (and shows a green check), open **helphubqr.com** again. The app should load.
 
+## Environment variable for helphubqr.com
+
+In **Vercel → Settings → Environment Variables**, set (for Production):
+
+- **`NEXT_PUBLIC_APP_URL`** = **`https://helphubqr.com`**
+
+This is used for QR links, redirects, and site metadata. Without it, the app may still run at helphubqr.com, but links (e.g. in emails or QR codes) could point to localhost or the wrong URL.
+
 ## Checklist
 
 - [ ] Root Directory is set to **`apps/web`** (not blank, not `.`).
+- [ ] **`NEXT_PUBLIC_APP_URL`** = **`https://helphubqr.com`** in Vercel env (Production).
 - [ ] The deployment you’re opening is **Production** (not a preview URL).
 - [ ] Latest deployment **succeeded** (green check in Deployments).
 - [ ] Domain **helphubqr.com** is listed under **Settings → Domains** for this project.

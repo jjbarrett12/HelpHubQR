@@ -1,10 +1,14 @@
 # Start the app
 
-## If port 3010 is in use (EADDRINUSE)
+**Project folder & Git fix:** see [../DEV.md](../DEV.md) at repo root (folder path, index.lock fix, run dev).
+
+---
+
+## If port 3011 is in use (EADDRINUSE)
 
 **Option 1 – Free the port, then start (PowerShell):**
 ```powershell
-Get-NetTCPConnection -LocalPort 3010 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }
+Get-NetTCPConnection -LocalPort 3011 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }
 cd "c:\Users\jjbarrett\OneDrive - Bear Facility Supply\Desktop\HelpHubQR\apps\web"
 npm run dev
 ```
@@ -22,10 +26,10 @@ Close any other terminal or Cursor window that might be running `npm run dev`, t
 
 ## Then open in the browser
 
-**http://localhost:3010**
+**http://localhost:3011**
 
-You should see a gray page with **HelpHub** and a **Go to login** button.
+You should see the HelpHub homepage (or login).
 
 If you see a blank white page, try:
-- **http://localhost:3010/api/health** — should show `OK HelpHub` (confirms server is running)
+- **http://localhost:3011/api/health** — should show `OK HelpHub` (confirms server is running)
 - Hard refresh: **Ctrl+Shift+R**
