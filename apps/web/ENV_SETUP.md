@@ -19,11 +19,11 @@ Open `apps/web/.env.local` and set:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...paste_the_long_anon_key_here...
-NEXT_PUBLIC_APP_URL=http://localhost:3010
+NEXT_PUBLIC_APP_URL=https://helphubqr.com
 ```
 
-- **Local dev:** keep `NEXT_PUBLIC_APP_URL=http://localhost:3010`.
-- **Production:** set `NEXT_PUBLIC_APP_URL=https://yourdomain.com` (your actual domain).
+- **Production:** `NEXT_PUBLIC_APP_URL=https://helphubqr.com` (set in Vercel env).
+- **Local dev:** set `NEXT_PUBLIC_APP_URL=http://localhost:3000` when running `npm run dev` locally.
 - No quotes around the values.
 - No spaces around the `=` sign.
 - Save the file, then restart the dev server: `npm run dev`.

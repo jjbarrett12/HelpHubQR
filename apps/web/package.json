@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3011",
+    "dev": "next dev -p 3000",
     "dev:3010": "next dev -p 3010",
-    "dev:fresh": "npx --yes kill-port 3011 2>nul; next dev -p 3011",
+    "dev:fresh": "npx --yes kill-port 3000 2>nul; next dev -p 3000",
     "clean": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true})\"",
     "build": "next build",
     "start": "next start",

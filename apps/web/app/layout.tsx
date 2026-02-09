@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeScript } from "@/components/theme/ThemeScript";
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3011";
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://helphubqr.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),

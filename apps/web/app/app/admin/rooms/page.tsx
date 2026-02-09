@@ -59,7 +59,7 @@ export default async function AdminRoomsPage({
     }))
     .sort((a, b) => naturalCompare(a.room_label ?? "", b.room_label ?? ""));
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3010";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://helphubqr.com";
 
   return (
     <div className="p-6 max-w-4xl">

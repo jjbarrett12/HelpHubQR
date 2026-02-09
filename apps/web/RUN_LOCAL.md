@@ -9,17 +9,17 @@
    ```powershell
    npm run dev
    ```
-   Wait until you see: `Local: http://localhost:3010`
+   Wait until you see: `Local: http://localhost:3000`
 
-3. **Open in your browser (exactly this):**  
-   **http://localhost:3010**
+3. **Open in your browser:**  
+   **http://localhost:3000** (local) or **https://helphubqr.com** (production)
 
 4. You should see either:
    - A redirect to the **login page** (HelpHub logo + "Staff sign in"), or
    - The **HelpHub** home with a "Go to login" button.
 
 If the page is blank:
-- Confirm the URL is exactly `http://localhost:3010` (not 3000).
+- Confirm the URL is exactly `http://localhost:3000` (local).
 - In the terminal, check for red errors after "Ready".
 - Press F12 in the browser → Console tab and note any errors.
 - Ensure `apps/web/.env.local` exists with `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.

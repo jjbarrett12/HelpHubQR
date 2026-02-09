@@ -35,7 +35,7 @@ cd "c:\Users\jjbarrett\OneDrive - Bear Facility Supply\Desktop\HelpHubQR"
 npm run dev
 ```
 
-Then open **http://localhost:3011** in your browser.
+Then open **http://localhost:3000** in your browser (or use **https://helphubqr.com** for production).
 
 - **Port in use?** See [apps/web/START-HERE.md](apps/web/START-HERE.md) (free port or use `npm run dev:fresh` from `apps/web`).
 - **More run options:** [apps/web/RUN_LOCAL.md](apps/web/RUN_LOCAL.md).

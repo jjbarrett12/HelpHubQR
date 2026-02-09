@@ -30,13 +30,13 @@ If you use `supabase db push` and all migrations (including `20250206140000_tick
 
 ## Dev server: port in use (EADDRINUSE)
 
-**When:** `npm run dev` fails with "address already in use :::3011" (or 3010).
+**When:** `npm run dev` fails with "address already in use :::3000" (or 3010).
 
 **Fix:**
 
 - Close any other terminal where the app is running, or
-- From repo root: `npm run dev:fresh` (tries to free the port and start on 3011), or
-- Run on the other port: `npm run dev:3010` if default is 3011.
+- From repo root: `npm run dev:fresh` (tries to free the port and start on 3000), or
+- Run on the other port: `npm run dev:3010` if default is 3000.
 
 ---
 
