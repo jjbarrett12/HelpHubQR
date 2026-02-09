@@ -31,17 +31,17 @@ export default function HomePage() {
                 </Button>
               </div>
             </div>
-            <div className="mx-auto mt-16 max-w-4xl">
-              <div className="relative aspect-video overflow-hidden rounded-xl border border-border bg-muted/50 shadow-xl dark:border-primary/20 dark:shadow-neon-sm">
-                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-muted to-muted/50">
-                  <Image
-                    src="/helphub-logo.png"
-                    alt="HelpHub dashboard preview"
-                    width={240}
-                    height={68}
-                    className="opacity-60 dark:opacity-40"
-                  />
-                </div>
+            <div className="mx-auto mt-16 max-w-5xl px-2">
+              <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-muted/30 shadow-2xl dark:border-primary/20 dark:shadow-neon-sm">
+                <Image
+                  src="/hero-dashboard-mockup.png"
+                  alt="HelpHub dashboard on MacBook and iPhone — manage housekeeping requests in real time"
+                  width={1200}
+                  height={675}
+                  className="w-full h-auto object-contain"
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 1024px"
+                />
               </div>
             </div>
           </div>

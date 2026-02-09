@@ -13,15 +13,15 @@ const navLinks = [
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-2">
+    <header className="sticky top-0 z-50 w-full overflow-visible border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8 overflow-visible">
+        <Link href="/" className="flex items-center shrink-0">
           <Image
             src="/helphub-logo.png"
             alt="HelpHub"
-            width={140}
-            height={40}
-            className="h-8 w-auto object-contain"
+            width={420}
+            height={120}
+            className="h-24 w-auto object-contain object-center"
           />
         </Link>
         <nav className="hidden items-center gap-8 md:flex">
