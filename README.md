@@ -16,6 +16,7 @@ Room-specific QR codes for housekeeping requests. Guests scan a QR in the room, 
 1. **Supabase**
    - Create a project at [supabase.com](https://supabase.com).
    - Run migrations: `supabase db push` or run the SQL in `supabase/migrations/` in the SQL editor.
+   - **MVP (Hotel Ops plan):** Run `supabase/migrations/20250210000000_mvp_schema.sql` then `20250210000001_mvp_seed.sql` to add properties, locations, qr_codes, tasks, etc. Canonical schema is in `/sql/001_init.sql`, `/sql/002_rls.sql`, `/sql/003_seed_dev.sql`.
    - Enable Realtime for the `tickets` table (included in first migration).
    - Deploy Edge Functions: `supabase functions deploy create-ticket`, `resolve-room`, `send-alerts`.
    - Set secrets for `create-ticket` and `send-alerts` (e.g. `SUPABASE_SERVICE_ROLE_KEY`, and optionally Twilio/SendGrid).
@@ -39,6 +40,14 @@ Room-specific QR codes for housekeeping requests. Guests scan a QR in the room, 
 | `/login` | Guest | Staff sign in |
 | `/t/[token]` | Guest | Public form (room from token) |
 | `/t/[token]/success` | Guest | Thank-you after submit |
+| **MVP (plan-aligned)** | | |
+| `/q/[qrId]` | Public | Entry: guest vs staff (resolve QR, staff key) |
+| `/guest/[qrId]` | Guest | Guest request UI (request types + submit) |
+| `/staff/[qrId]` | Staff | One-screen staff tasks (start/complete/escalate) |
+| `/offline` | Public | Offline fallback |
+| `/app/supervisor` | Supervisor | Task list (open / in progress) |
+| `/app/supervisor/tasks/[taskId]` | Supervisor | Task detail + event timeline + proof |
+| `/app/admin/property` | Admin | MVP property config (request types, branding) |
 | `/app` | Staff | Redirect to first site or admin |
 | `/app/sites/[siteId]` | Staff | Realtime ticket list for site |
 | `/app/tickets/[ticketId]` | Staff | Ticket detail, claim, status, notes |
@@ -76,6 +85,10 @@ To enable “Enable push notifications” on the site dashboard:
    - `VAPID_PRIVATE_KEY` = the private key from step 1  
 
 4. Restart the Next dev server and reload the app. “Enable push notifications” should work; new tickets will trigger push if the user has enabled them for that site.
+
+## Pilot onboarding
+
+See **[PILOT-ONBOARDING.md](PILOT-ONBOARDING.md)** for the step-by-step checklist (property setup, locations, request types, QR export, shift token, training). In the app, supervisors can open **Property – MVP config** then **Pilot onboarding checklist** for the same content.
 
 ## Deploy
 
