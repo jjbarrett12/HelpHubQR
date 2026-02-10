@@ -89,12 +89,15 @@ export default async function SupervisorPage({
 
   return (
     <div className="p-6">
-      <nav className="mb-6 flex items-center gap-2">
+      <nav className="mb-6 flex items-center gap-2 flex-wrap">
         <Button variant="ghost" size="sm" asChild>
           <Link href="/app">Dashboard</Link>
         </Button>
         <span className="text-muted-foreground">/</span>
         <h1 className="text-2xl font-semibold tracking-tight">Supervisor – Tasks</h1>
+        <Button variant="ghost" size="sm" asChild className="ml-2">
+          <Link href="/app/supervisor/reports">Reports</Link>
+        </Button>
       </nav>
 
       <div className="mb-4 flex gap-2">

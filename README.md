@@ -18,8 +18,8 @@ Room-specific QR codes for housekeeping requests. Guests scan a QR in the room, 
    - Run migrations: `supabase db push` or run the SQL in `supabase/migrations/` in the SQL editor.
    - **MVP (Hotel Ops plan):** Run `supabase/migrations/20250210000000_mvp_schema.sql` then `20250210000001_mvp_seed.sql` to add properties, locations, qr_codes, tasks, etc. Canonical schema is in `/sql/001_init.sql`, `/sql/002_rls.sql`, `/sql/003_seed_dev.sql`.
    - Enable Realtime for the `tickets` table (included in first migration).
-   - Deploy Edge Functions: `supabase functions deploy create-ticket`, `resolve-room`, `send-alerts`.
-   - Set secrets for `create-ticket` and `send-alerts` (e.g. `SUPABASE_SERVICE_ROLE_KEY`, and optionally Twilio/SendGrid).
+   - Deploy Edge Functions: `supabase functions deploy create-ticket`, `resolve-room`, `send-alerts`, and optionally `check-sla` (for SLA breach alerts; call via cron every 10–15 min).
+   - Set secrets for `create-ticket` and `send-alerts` (e.g. `SUPABASE_SERVICE_ROLE_KEY`, and optionally Twilio/SendGrid). For `check-sla`, use the same Resend/SendGrid/Twilio secrets and `DASHBOARD_URL`.
    - For customer logos: in Dashboard → Storage, create a **public** bucket named `site-logos`. Run the migration that adds `logo_url` and `room_count` to sites (and storage policies).
 
 2. **App**
@@ -53,6 +53,16 @@ Room-specific QR codes for housekeeping requests. Guests scan a QR in the room, 
 | `/app/tickets/[ticketId]` | Staff | Ticket detail, claim, status, notes |
 | `/app/admin/sites` | Admin | Create site, link to rooms |
 | `/app/admin/rooms?siteId=...` | Admin | CSV import, QR export |
+| `/t/status/[token]` | Guest | Check request status (short-lived link after submit) |
+| `/app/supervisor/reports` | Supervisor | Reports: by request type, SLA, resolution time |
+
+## New features (Feb 2025)
+
+- **Guest request status link** – After submitting a request, guests are redirected to `/t/status/[token]` where they can see status (Received → In progress → Done). Link expires in 48 hours.
+- **SLA breach alerts (MVP)** – Property admins configure email/SMS in **Property – MVP config** under “SLA breach alerts”. Deploy the `check-sla` Edge Function and call it every 10–15 min (e.g. Vercel Cron) to notify when tasks are overdue.
+- **Supervisor reports** – **Supervisor → Reports**: tasks by request type (last 7/30 days), completed count, overdue count, SLA compliance %.
+- **Guest “completed” notification** – Optional email field on the guest form; when staff marks a ticket Resolved, the guest receives an email (requires `RESEND_API_KEY` or `SENDGRID_API_KEY` in the app env).
+- **Audit log** – Ticket status changes are written to `audit_log` (entity_type, entity_id, action, actor_user_id, payload). Use for compliance or future “Activity” views.
 
 ## Security
 

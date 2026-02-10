@@ -14,6 +14,7 @@ interface CreateTicketBody {
   request_type?: string | null;
   note: string;
   priority?: "low" | "normal" | "high";
+  guest_email?: string | null;
 }
 
 serve(async (req) => {
@@ -30,7 +31,7 @@ serve(async (req) => {
 
   try {
     const body = (await req.json()) as CreateTicketBody;
-    const { token, request_type, note, priority = "normal" } = body;
+    const { token, request_type, note, priority = "normal", guest_email } = body;
 
     if (!token || typeof token !== "string") {
       return new Response(
@@ -87,6 +88,8 @@ serve(async (req) => {
       );
     }
 
+    const guestEmail = typeof guest_email === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guest_email.trim()) ? guest_email.trim() : null;
+
     // Insert ticket
     const { data: ticket, error: ticketError } = await supabase
       .from("tickets")
@@ -100,6 +103,7 @@ serve(async (req) => {
         status: "new",
         priority: validPriority,
         created_via: "qr",
+        guest_email: guestEmail,
       })
       .select("id")
       .single();
@@ -118,6 +122,15 @@ serve(async (req) => {
       actor_user_id: null,
       event_type: "created",
       payload: { note: note.trim(), request_type: request_type ?? null, priority: validPriority },
+    });
+
+    // Guest status token: 48h link so guest can check status at /t/status/[statusToken]
+    const statusToken = crypto.randomUUID().replace(/-/g, "") + crypto.randomUUID().replace(/-/g, "").slice(0, 16);
+    const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString();
+    await supabase.from("guest_status_tokens").insert({
+      ticket_id: ticket.id,
+      token: statusToken,
+      expires_at: expiresAt,
     });
 
     // Update last_scanned_at on token
@@ -141,7 +154,7 @@ serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ ticket_id: ticket.id }),
+      JSON.stringify({ ticket_id: ticket.id, status_token: statusToken }),
       { status: 201, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e) {

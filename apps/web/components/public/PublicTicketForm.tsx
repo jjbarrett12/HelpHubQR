@@ -28,6 +28,7 @@ export function PublicTicketForm({
   const [requestType, setRequestType] = useState<string>("");
   const [note, setNote] = useState("");
   const [priority, setPriority] = useState<"low" | "normal" | "high">("normal");
+  const [guestEmail, setGuestEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -49,6 +50,7 @@ export function PublicTicketForm({
           request_type: requestType || null,
           note: trimmed,
           priority,
+          guest_email: guestEmail.trim() || null,
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -56,7 +58,11 @@ export function PublicTicketForm({
         setError(data.error || "Something went wrong. Please try again.");
         return;
       }
-      router.push("/t/" + token + "/success");
+      if (data.status_token) {
+        router.push(`/t/status/${data.status_token}`);
+      } else {
+        router.push("/t/" + token + "/success");
+      }
     } catch {
       setError("Network error. Please try again.");
     } finally {
@@ -94,6 +100,16 @@ export function PublicTicketForm({
           className="resize-none"
         />
         <p className="text-xs text-muted-foreground">At least 5 characters</p>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="guest_email">Email (optional – we&apos;ll notify you when done)</Label>
+        <Input
+          id="guest_email"
+          type="email"
+          placeholder="you@example.com"
+          value={guestEmail}
+          onChange={(e) => setGuestEmail(e.target.value)}
+        />
       </div>
       <div className="space-y-2">
         <Label>Priority</Label>

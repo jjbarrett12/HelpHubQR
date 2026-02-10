@@ -62,3 +62,34 @@ export async function updateRequestType(formData: FormData) {
   revalidatePath("/app/admin/property");
   return {};
 }
+
+export async function addPropertyAlertRule(formData: FormData) {
+  const propertyId = await getPropertyId();
+  if (!propertyId) return { error: "Unauthorized" };
+  const channel = formData.get("channel") as string | null;
+  const target = formData.get("target") as string | null;
+  if (!channel || !target?.trim()) return { error: "Channel and target required" };
+  if (channel !== "email" && channel !== "sms") return { error: "Channel must be email or sms" };
+  const admin = createServiceRoleClient();
+  const { error } = await admin.from("property_alert_rules").insert({
+    property_id: propertyId,
+    channel,
+    target: target.trim(),
+    enabled: true,
+  });
+  if (error) return { error: error.message };
+  revalidatePath("/app/admin/property");
+  return {};
+}
+
+export async function deletePropertyAlertRule(formData: FormData) {
+  const ruleId = formData.get("ruleId") as string | null;
+  if (!ruleId) return { error: "Missing ruleId" };
+  const propertyId = await getPropertyId();
+  if (!propertyId) return { error: "Unauthorized" };
+  const admin = createServiceRoleClient();
+  const { error } = await admin.from("property_alert_rules").delete().eq("id", ruleId).eq("property_id", propertyId);
+  if (error) return { error: error.message };
+  revalidatePath("/app/admin/property");
+  return {};
+}

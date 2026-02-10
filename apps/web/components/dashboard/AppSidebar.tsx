@@ -24,8 +24,22 @@ export async function AppSidebar() {
     ? await supabase.from("tenants").select("name, logo_url").eq("id", profile.tenant_id).single()
     : { data: null };
 
-  const sidebarLogoUrl = tenant?.logo_url ?? null;
-  const sidebarLogoAlt = tenant?.name ?? "HelpHub";
+  let sidebarLogoUrl = tenant?.logo_url ?? null;
+  let sidebarLogoAlt = tenant?.name ?? "HelpHub";
+  if (!sidebarLogoUrl && profile?.tenant_id) {
+    const { data: firstSiteWithLogo } = await supabase
+      .from("sites")
+      .select("name, logo_url")
+      .eq("tenant_id", profile.tenant_id)
+      .not("logo_url", "is", null)
+      .order("name")
+      .limit(1)
+      .maybeSingle();
+    if (firstSiteWithLogo?.logo_url) {
+      sidebarLogoUrl = firstSiteWithLogo.logo_url;
+      sidebarLogoAlt = firstSiteWithLogo.name ?? "Customer";
+    }
+  }
 
   return (
     <aside className="w-56 border-r border-sidebar bg-card/80 backdrop-blur-sm flex flex-col shadow-sm dark:bg-sidebar-dark dark:border-primary/40 dark:shadow-neon-sm">

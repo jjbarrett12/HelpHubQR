@@ -92,6 +92,31 @@ export function TicketDetail({
       event_type: "status_changed",
       payload: { from: ticket.status, to: newStatus },
     });
+    try {
+      await fetch("/api/audit-log", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          entityType: "ticket",
+          entityId: ticket.id,
+          action: "status_change",
+          payload: { from: ticket.status, to: newStatus },
+        }),
+      });
+    } catch (_) {
+      // Non-blocking
+    }
+    if (newStatus === "resolved") {
+      try {
+        await fetch("/api/notify-guest-completed", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ticketId: ticket.id }),
+        });
+      } catch (_) {
+        // Non-blocking
+      }
+    }
     router.refresh();
   }
 

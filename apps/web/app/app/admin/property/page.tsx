@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { PropertyForm } from "./PropertyForm";
 import { RequestTypeRow } from "./RequestTypeRow";
 import { MvpQrExportPanel } from "./MvpQrExportPanel";
+import { PropertyAlertRules } from "./PropertyAlertRules";
 
 export const dynamic = "force-dynamic";
 
@@ -75,6 +76,12 @@ export default async function AdminPropertyPage() {
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://helphubqr.com";
 
+  const { data: alertRules } = await admin
+    .from("property_alert_rules")
+    .select("id, channel, target, enabled")
+    .eq("property_id", propertyId)
+    .order("created_at");
+
   return (
     <div className="p-6">
       <nav className="mb-6 flex items-center gap-2 flex-wrap">
@@ -91,6 +98,8 @@ export default async function AdminPropertyPage() {
       </nav>
 
       <div className="space-y-6">
+        <PropertyAlertRules rules={alertRules ?? []} />
+
         <section className="rounded-lg border p-4">
           <h2 className="mb-3 font-medium text-foreground">Property & branding</h2>
           <PropertyForm
