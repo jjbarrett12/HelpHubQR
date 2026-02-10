@@ -38,44 +38,44 @@ export async function IssueStats({ siteId }: { siteId: string }) {
   const resolvedToday = resolvedTodayCount ?? 0;
 
   return (
-    <section className="space-y-4" aria-labelledby="issue-stats-heading">
-      <h2 id="issue-stats-heading" className="text-sm font-medium text-muted-foreground">Issue tracking</h2>
-      <div className="grid gap-3 sm:grid-cols-3">
-        <Card className="border-card-border">
-          <CardHeader className="flex flex-row items-center gap-2 pb-1">
-            <Inbox className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm font-medium">Open</span>
+    <section className="space-y-5" aria-labelledby="issue-stats-heading">
+      <h2 id="issue-stats-heading" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Issue tracking</h2>
+      <div className="grid gap-4 sm:grid-cols-3">
+        <Card className="premium-card border-border/60">
+          <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
+            <span className="text-sm font-medium text-muted-foreground">Open</span>
+            <Inbox className="h-5 w-5 text-muted-foreground/80" />
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-semibold">{open}</p>
-            <p className="text-xs text-muted-foreground">New + in progress</p>
+            <p className="text-3xl font-bold tracking-tight">{open}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">New + in progress</p>
           </CardContent>
         </Card>
-        <Card className="border-card-border">
-          <CardHeader className="flex flex-row items-center gap-2 pb-1">
-            <AlertCircle className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm font-medium">New today</span>
+        <Card className="premium-card border-border/60">
+          <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
+            <span className="text-sm font-medium text-muted-foreground">New today</span>
+            <AlertCircle className="h-5 w-5 text-muted-foreground/80" />
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-semibold">{newToday}</p>
-            <p className="text-xs text-muted-foreground">Issues received</p>
+            <p className="text-3xl font-bold tracking-tight">{newToday}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">Issues received</p>
           </CardContent>
         </Card>
-        <Card className="border-card-border">
-          <CardHeader className="flex flex-row items-center gap-2 pb-1">
-            <CheckCircle className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm font-medium">Resolved today</span>
+        <Card className="premium-card border-border/60">
+          <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
+            <span className="text-sm font-medium text-muted-foreground">Resolved today</span>
+            <CheckCircle className="h-5 w-5 text-muted-foreground/80" />
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-semibold">{resolvedToday}</p>
-            <p className="text-xs text-muted-foreground">Completed</p>
+            <p className="text-3xl font-bold tracking-tight">{resolvedToday}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">Completed</p>
           </CardContent>
         </Card>
       </div>
       {dailyStats && dailyStats.length > 0 && (
-        <Card className="border-card-border">
+        <Card className="premium-card border-border/60">
           <CardHeader>
-            <span className="text-sm font-medium">Last 7 days (incoming / resolved)</span>
+            <span className="text-sm font-medium text-muted-foreground">Last 7 days (incoming / resolved)</span>
           </CardHeader>
           <CardContent>
             <ul className="flex flex-wrap gap-4 text-sm">

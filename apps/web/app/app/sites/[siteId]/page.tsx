@@ -31,17 +31,20 @@ export default async function SiteDashboardPage({
   );
 
   return (
-    <div className="p-6 space-y-8">
-      <div className="flex items-center justify-between flex-wrap gap-2">
-        <h1 className="text-2xl font-semibold tracking-tight">{site.name}</h1>
-        <EnablePushNotifications siteId={siteId} />
-      </div>
-      <IssueStats siteId={siteId} />
-      <section aria-labelledby="tickets-heading">
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-          <h2 id="tickets-heading" className="text-lg font-medium text-foreground">
-            Tickets
-          </h2>
+    <div className="min-h-full">
+      <header className="sticky top-0 z-10 border-b border-border/50 bg-[var(--app-bg)]/80 backdrop-blur-md px-6 py-5">
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">{site.name}</h1>
+          <EnablePushNotifications siteId={siteId} />
+        </div>
+      </header>
+      <div className="p-6 md:p-8 space-y-10 max-w-6xl">
+        <IssueStats siteId={siteId} />
+        <section aria-labelledby="tickets-heading" className="space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <h2 id="tickets-heading" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Tickets
+            </h2>
           <div className="flex items-center gap-2">
             <AddTicketDialog
               siteId={siteId}
@@ -51,8 +54,9 @@ export default async function SiteDashboardPage({
             <TicketFilters siteId={siteId} />
           </div>
         </div>
-        <TicketList siteId={siteId} />
-      </section>
+          <TicketList siteId={siteId} />
+        </section>
+      </div>
     </div>
   );
 }

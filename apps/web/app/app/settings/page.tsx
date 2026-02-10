@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import { BrandingForm } from "./BrandingForm";
+import { BrandingThemeForm } from "./BrandingThemeForm";
 
 export default async function SettingsPage() {
   const supabase = await createClient();
@@ -21,19 +22,23 @@ export default async function SettingsPage() {
 
   const { data: tenant } = await supabase
     .from("tenants")
-    .select("name, logo_url")
+    .select("name, logo_url, branding")
     .eq("id", profile.tenant_id)
     .single();
 
+  const branding = (tenant?.branding as { primary_color?: string | null } | null) ?? {};
+  const primaryColor = branding.primary_color ?? null;
+
   return (
     <div className="p-6 md:p-8 max-w-2xl">
-      <h1 className="text-2xl font-bold text-foreground">Branding</h1>
+      <h1 className="text-2xl font-bold text-foreground tracking-tight">Branding & theme</h1>
       <p className="mt-1 text-muted-foreground">
-        Upload your company logo. It will appear in the sidebar when you’re logged in instead of the HelpHub logo.
+        Customize your dashboard: logo and primary color. It will appear in the sidebar when you’re logged in instead of the HelpHub logo.
       </p>
 
-      <div className="mt-8 rounded-xl border border-border bg-card p-6 dark:border-card-border">
-        <p className="text-sm font-medium text-foreground">Current logo</p>
+      <div className="mt-8 space-y-8">
+        <section className="rounded-2xl border border-border bg-card p-6 shadow-sm dark:border-border/50">
+          <p className="text-sm font-medium text-foreground">Logo</p>
         <div className="mt-3 flex items-center gap-4">
           {tenant?.logo_url ? (
             <Image
@@ -41,15 +46,22 @@ export default async function SettingsPage() {
               alt={tenant.name ?? "Company logo"}
               width={160}
               height={48}
-              className="h-12 w-auto object-contain rounded border border-border bg-muted/30 p-2"
+              className="h-12 w-auto object-contain rounded-lg border border-border bg-muted/30 p-2"
               unoptimized
             />
           ) : (
-            <span className="text-sm text-muted-foreground">No logo uploaded. HelpHub logo is shown in the sidebar.</span>
+            <span className="text-sm text-muted-foreground">No logo. Default is shown in the sidebar.</span>
           )}
         </div>
 
-        <BrandingForm className="mt-6" />
+          <BrandingForm className="mt-6" initialLogoUrl={tenant?.logo_url} />
+        </section>
+
+        <section className="rounded-2xl border border-border bg-card p-6 shadow-sm dark:border-border/50">
+          <p className="text-sm font-medium text-foreground">Primary color</p>
+          <p className="mt-1 text-xs text-muted-foreground">Buttons, links, and accents use this color.</p>
+          <BrandingThemeForm initialPrimaryColor={primaryColor} />
+        </section>
       </div>
     </div>
   );

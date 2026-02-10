@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeScript } from "@/components/theme/ThemeScript";
+
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://helphubqr.com";
 
@@ -22,11 +29,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={plusJakarta.variable}>
       <head>
         <ThemeScript />
       </head>
-      <body className="min-h-screen text-foreground antialiased" style={{ margin: 0 }}>
+      <body className="min-h-screen font-sans text-foreground antialiased" style={{ margin: 0 }}>
         {children}
       </body>
     </html>

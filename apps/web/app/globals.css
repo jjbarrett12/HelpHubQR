@@ -23,7 +23,7 @@
     --border: 350 20% 90%;
     --input: 214.3 31.8% 91.4%;
     --ring: 350 100% 48%;
-    --radius: 0.5rem;
+    --radius: 0.75rem;
     /* Light: white/gray base with neon red accents */
     --app-bg: linear-gradient(160deg, #fef2f2 0%, #f1f5f9 50%, #f8fafc 100%);
     --sidebar-border: 350 100% 65%;
@@ -84,7 +84,22 @@
     @apply text-foreground antialiased;
     background: var(--app-bg);
     min-height: 100vh;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
+}
+
+/* Premium card and surface styles */
+.premium-card {
+  @apply rounded-2xl border border-border/80 bg-card/95 shadow-sm shadow-black/5 backdrop-blur-sm;
+}
+.dark .premium-card {
+  @apply border-white/10 shadow-black/20;
+}
+.premium-sidebar {
+  @apply border-border/50 bg-card/90 shadow-lg shadow-black/5 backdrop-blur-md;
+}
+.dark .premium-sidebar {
+  @apply border-white/10 bg-black/40 shadow-black/30;
 }
 
 /* Accent borders – light and dark use neon red */

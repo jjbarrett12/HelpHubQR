@@ -8,38 +8,48 @@ import { Button } from "@/components/ui/button";
 const navLinks = [
   { href: "#features", label: "Features" },
   { href: "#how-it-works", label: "How it works" },
-  { href: "/login", label: "Log in" },
+  { href: "#demo", label: "Demo" },
 ];
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 w-full overflow-visible border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8 overflow-visible">
-        <Link href="/" className="flex items-center shrink-0">
+    <header className="sticky top-0 z-50 w-full border-b border-border/30 bg-background/80 backdrop-blur-xl">
+      <div className="container mx-auto flex h-14 md:h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        <Link href="/" className="flex items-center shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md">
           <Image
             src="/helphub-logo.png"
             alt="HelpHub"
-            width={560}
-            height={160}
-            className="h-32 w-auto object-contain object-center md:h-40"
+            width={140}
+            height={40}
+            className="h-8 w-auto object-contain md:h-9"
           />
         </Link>
-        <nav className="hidden items-center gap-8 md:flex">
+        <nav className="hidden items-center gap-1 md:flex">
           {navLinks.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
             >
               {label}
             </Link>
           ))}
         </nav>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <ThemeToggle />
-          <Button asChild size="default" className="rounded-md bg-sky-500 font-semibold text-white hover:bg-sky-600 dark:bg-sky-500 dark:hover:bg-sky-600">
+          <Button
+            asChild
+            size="sm"
+            className="rounded-lg bg-primary px-4 font-semibold text-primary-foreground shadow-sm hover:opacity-95"
+          >
             <Link href="#demo">Get a demo</Link>
           </Button>
+          <Link
+            href="/login"
+            className="hidden rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground sm:inline-block"
+          >
+            Log in
+          </Link>
         </div>
       </div>
     </header>
