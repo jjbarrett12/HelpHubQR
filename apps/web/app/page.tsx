@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Header } from "@/components/home/Header";
 import { Footer } from "@/components/home/Footer";
@@ -16,14 +15,14 @@ export default function HomePage() {
           className="relative overflow-hidden border-b border-border/40"
           style={{
             background:
-              "linear-gradient(165deg, hsl(var(--background)) 0%, hsl(var(--muted) / 0.5) 25%, hsl(var(--primary) / 0.08) 50%, hsl(var(--muted) / 0.3) 75%, hsl(var(--background)) 100%)",
+              "linear-gradient(165deg, hsl(var(--background)) 0%, hsl(199 89% 48% / 0.08) 25%, hsl(199 89% 48% / 0.12) 50%, hsl(199 89% 48% / 0.06) 75%, hsl(var(--background)) 100%)",
           }}
         >
           <div className="container mx-auto px-4 py-16 sm:px-6 sm:py-20 md:py-24 lg:px-8 lg:py-28 xl:py-32">
             <div className="mx-auto max-w-4xl text-center">
               <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
                 Housekeeping requests,{" "}
-                <span className="gradient-text">simplified</span>
+                <span className="gradient-text-blue">simplified</span>
               </h1>
               <p className="mt-6 text-lg text-muted-foreground sm:text-xl md:mt-8 md:text-2xl md:leading-relaxed">
                 Guests scan the QR code in their room. Your team gets the request instantly. No phones, no clipboards—just a smooth experience for everyone.
@@ -32,7 +31,7 @@ export default function HomePage() {
                 <Button
                   asChild
                   size="lg"
-                  className="min-w-[180px] rounded-xl px-8 py-6 text-base font-semibold shadow-lg transition hover:scale-[1.02] dark:shadow-neon"
+                  className="min-w-[180px] rounded-xl bg-sky-500 px-8 py-6 text-base font-semibold text-white shadow-lg shadow-sky-500/30 transition hover:scale-[1.02] hover:bg-sky-600 dark:bg-sky-500 dark:shadow-sky-500/25 dark:hover:bg-sky-600"
                 >
                   <Link href="#demo">Get a demo</Link>
                 </Button>
@@ -40,23 +39,10 @@ export default function HomePage() {
                   asChild
                   variant="outline"
                   size="lg"
-                  className="min-w-[180px] rounded-xl border-2 px-8 py-6 text-base font-semibold"
+                  className="min-w-[180px] rounded-xl border-2 border-sky-400/80 px-8 py-6 text-base font-semibold text-sky-600 hover:bg-sky-50 hover:text-sky-700 dark:border-sky-400/60 dark:text-sky-400 dark:hover:bg-sky-950/50 dark:hover:text-sky-300"
                 >
                   <Link href="#how-it-works">See how it works</Link>
                 </Button>
-              </div>
-            </div>
-            <div className="mx-auto mt-14 max-w-5xl px-2 sm:mt-16 md:mt-20 lg:mt-24">
-              <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-muted/20 shadow-2xl dark:border-primary/20 dark:shadow-neon-sm md:rounded-3xl">
-                <Image
-                  src="/hero-dashboard-mockup.png"
-                  alt="HelpHub dashboard on MacBook and iPhone — manage housekeeping requests in real time"
-                  width={1200}
-                  height={675}
-                  className="w-full h-auto object-contain"
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 1024px"
-                />
               </div>
             </div>
           </div>
@@ -100,9 +86,9 @@ export default function HomePage() {
               ].map((item) => (
                 <div
                   key={item.title}
-                  className="group relative rounded-2xl border border-border/80 bg-card/80 p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-card-border dark:bg-card/90 md:p-8"
+                  className="group relative rounded-2xl border-2 border-sky-400/50 bg-card/80 p-6 shadow-md shadow-sky-500/10 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-sky-500/15 dark:border-sky-400/40 dark:bg-card/90 dark:shadow-sky-500/5 dark:hover:shadow-sky-500/10 md:p-8"
                 >
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-sky-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
                   <h3 className="relative text-xl font-bold text-foreground sm:text-2xl">{item.title}</h3>
                   <p className="relative mt-3 text-sm leading-relaxed text-muted-foreground sm:mt-4 sm:text-base">
                     {item.description}
@@ -154,10 +140,9 @@ export default function HomePage() {
                   className="flex flex-1 flex-col items-center text-center md:items-center"
                 >
                   <div
-                    className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl text-2xl font-bold shadow-lg sm:h-20 sm:w-20 sm:text-3xl"
+                    className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl text-2xl font-bold text-white shadow-lg shadow-sky-500/30 sm:h-20 sm:w-20 sm:text-3xl"
                     style={{
-                      background: "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(350 100% 55%) 100%)",
-                      color: "white",
+                      background: "linear-gradient(135deg, #0ea5e9 0%, #0284c7 50%, #0369a1 100%)",
                     }}
                   >
                     {item.step}
@@ -178,7 +163,7 @@ export default function HomePage() {
           className="relative border-b border-border/40 py-16 sm:py-20 md:py-24 lg:py-28"
           style={{
             background:
-              "linear-gradient(150deg, hsl(var(--primary) / 0.12) 0%, hsl(var(--primary) / 0.06) 40%, hsl(var(--muted) / 0.4) 100%)",
+              "linear-gradient(150deg, hsl(199 89% 48% / 0.15) 0%, hsl(199 89% 48% / 0.08) 40%, hsl(var(--muted) / 0.4) 100%)",
           }}
         >
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -193,7 +178,7 @@ export default function HomePage() {
                 <Button
                   asChild
                   size="lg"
-                  className="min-w-[200px] rounded-xl px-10 py-6 text-base font-semibold shadow-lg transition hover:scale-[1.02] dark:shadow-neon"
+                  className="min-w-[200px] rounded-xl bg-sky-500 px-10 py-6 text-base font-semibold text-white shadow-lg shadow-sky-500/30 transition hover:scale-[1.02] hover:bg-sky-600 dark:bg-sky-500 dark:shadow-sky-500/25 dark:hover:bg-sky-600"
                 >
                   <Link href="mailto:demo@helphub.com?subject=HelpHub%20demo%20request">
                     Get a demo
@@ -204,7 +189,7 @@ export default function HomePage() {
                 Or{" "}
                 <Link
                   href="/login"
-                  className="font-semibold text-primary underline-offset-4 hover:underline dark:text-neon"
+                  className="font-semibold text-sky-600 underline-offset-4 hover:underline dark:text-sky-400"
                 >
                   log in
                 </Link>{" "}

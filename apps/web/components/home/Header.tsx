@@ -19,9 +19,9 @@ export function Header() {
           <Image
             src="/helphub-logo.png"
             alt="HelpHub"
-            width={420}
-            height={120}
-            className="h-24 w-auto object-contain object-center"
+            width={560}
+            height={160}
+            className="h-32 w-auto object-contain object-center md:h-40"
           />
         </Link>
         <nav className="hidden items-center gap-8 md:flex">
@@ -37,7 +37,7 @@ export function Header() {
         </nav>
         <div className="flex items-center gap-3">
           <ThemeToggle />
-          <Button asChild size="default" className="rounded-md font-semibold">
+          <Button asChild size="default" className="rounded-md bg-sky-500 font-semibold text-white hover:bg-sky-600 dark:bg-sky-500 dark:hover:bg-sky-600">
             <Link href="#demo">Get a demo</Link>
           </Button>
         </div>
