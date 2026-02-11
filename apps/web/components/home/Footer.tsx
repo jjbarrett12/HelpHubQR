@@ -1,11 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
 
+const calendlyUrl = process.env.NEXT_PUBLIC_CALENDLY_URL || "#demo";
+
 const footerLinks = {
   Product: [
     { href: "#features", label: "Features" },
     { href: "#how-it-works", label: "How it works" },
-    { href: "#demo", label: "Get a demo" },
+    { href: calendlyUrl, label: "See it in action" },
   ],
   Company: [
     { href: "/login", label: "Log in" },
@@ -27,9 +29,9 @@ export function Footer() {
               <Image
                 src="/helphub-logo.png"
                 alt="HelpHub"
-                width={140}
-                height={40}
-                className="h-8 w-auto object-contain opacity-90"
+                width={200}
+                height={56}
+                className="h-12 w-auto object-contain opacity-90 sm:h-14"
               />
             </Link>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
@@ -41,9 +43,15 @@ export function Footer() {
             <ul className="mt-4 space-y-3">
               {footerLinks.Product.map(({ href, label }) => (
                 <li key={label}>
-                  <Link href={href} className="text-sm text-muted-foreground transition hover:text-foreground">
-                    {label}
-                  </Link>
+                  {href.startsWith("http") ? (
+                    <a href={href} target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground transition hover:text-foreground">
+                      {label}
+                    </a>
+                  ) : (
+                    <Link href={href} className="text-sm text-muted-foreground transition hover:text-foreground">
+                      {label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>

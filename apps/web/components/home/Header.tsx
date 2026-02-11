@@ -19,9 +19,9 @@ export function Header() {
           <Image
             src="/helphub-logo.png"
             alt="HelpHub"
-            width={140}
-            height={40}
-            className="h-8 w-auto object-contain md:h-9"
+            width={200}
+            height={56}
+            className="h-11 w-auto object-contain sm:h-12 md:h-14"
           />
         </Link>
         <nav className="hidden items-center gap-1 md:flex">
@@ -42,7 +42,9 @@ export function Header() {
             size="sm"
             className="rounded-lg bg-primary px-4 font-semibold text-primary-foreground shadow-sm hover:opacity-95"
           >
-            <Link href="#demo">Get a demo</Link>
+            <Link href={process.env.NEXT_PUBLIC_CALENDLY_URL || "#demo"} target={process.env.NEXT_PUBLIC_CALENDLY_URL ? "_blank" : undefined} rel={process.env.NEXT_PUBLIC_CALENDLY_URL ? "noopener noreferrer" : undefined}>
+              See it in action
+            </Link>
           </Button>
           <Link
             href="/login"

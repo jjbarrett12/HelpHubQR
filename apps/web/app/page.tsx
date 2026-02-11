@@ -47,7 +47,13 @@ export default function HomePage() {
               </p>
               <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
                 <Button asChild size="lg" className="w-full min-w-[160px] rounded-xl sm:w-auto">
-                  <Link href="#demo">Get a demo</Link>
+                  <Link
+                    href={process.env.NEXT_PUBLIC_CALENDLY_URL || "#demo"}
+                    target={process.env.NEXT_PUBLIC_CALENDLY_URL ? "_blank" : undefined}
+                    rel={process.env.NEXT_PUBLIC_CALENDLY_URL ? "noopener noreferrer" : undefined}
+                  >
+                    See it in action
+                  </Link>
                 </Button>
                 <Button
                   asChild
@@ -184,8 +190,12 @@ export default function HomePage() {
               </p>
               <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
                 <Button asChild size="lg" className="w-full min-w-[180px] rounded-xl sm:w-auto">
-                  <Link href="mailto:demo@helphubqr.com?subject=HelpHub%20demo%20request">
-                    Get a demo
+                  <Link
+                    href={process.env.NEXT_PUBLIC_CALENDLY_URL || "mailto:demo@helphubqr.com?subject=HelpHub%20demo%20request"}
+                    target={process.env.NEXT_PUBLIC_CALENDLY_URL ? "_blank" : undefined}
+                    rel={process.env.NEXT_PUBLIC_CALENDLY_URL ? "noopener noreferrer" : undefined}
+                  >
+                    See it in action
                   </Link>
                 </Button>
                 <Link
