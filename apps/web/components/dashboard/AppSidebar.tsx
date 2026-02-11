@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { SiteNavWithSearch } from "@/components/dashboard/SiteNavWithSearch";
-import { LayoutDashboard, Settings, Users, LogOut, Palette } from "lucide-react";
+import { LayoutDashboard, Settings, Users, LogOut, Palette, HelpCircle } from "lucide-react";
 
 export async function AppSidebar() {
   const supabase = await createClient();
@@ -99,6 +99,12 @@ export async function AppSidebar() {
               </Button>
             </Link>
           )}
+          <Link href="/app/help">
+            <Button variant="ghost" className="w-full justify-start gap-2">
+              <HelpCircle className="h-4 w-4" />
+              Help
+            </Button>
+          </Link>
         </div>
       </nav>
       <div className="p-3 border-t border-border/50">

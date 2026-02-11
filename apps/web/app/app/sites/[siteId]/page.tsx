@@ -5,6 +5,7 @@ import { TicketFilters } from "@/components/dashboard/TicketFilters";
 import { IssueStats } from "@/components/dashboard/IssueStats";
 import { EnablePushNotifications } from "@/components/dashboard/EnablePushNotifications";
 import { AddTicketDialog } from "@/components/dashboard/AddTicketDialog";
+import { ExportTicketsButton } from "@/components/dashboard/ExportTicketsButton";
 import { naturalCompare } from "@/lib/utils";
 
 export default async function SiteDashboardPage({
@@ -45,15 +46,16 @@ export default async function SiteDashboardPage({
             <h2 id="tickets-heading" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Tickets
             </h2>
-          <div className="flex items-center gap-2">
-            <AddTicketDialog
+            <div className="flex flex-wrap items-center gap-3">
+              <ExportTicketsButton siteId={siteId} />
+              <AddTicketDialog
               siteId={siteId}
               siteName={site.name}
               rooms={rooms}
             />
-            <TicketFilters siteId={siteId} />
+              <TicketFilters siteId={siteId} />
+            </div>
           </div>
-        </div>
           <TicketList siteId={siteId} />
         </section>
       </div>
