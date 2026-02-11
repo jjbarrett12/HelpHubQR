@@ -27,22 +27,18 @@ export default async function PublicTicketPage({
   if (!resolved) notFound();
 
   return (
-    <main className="min-h-screen bg-muted/30 flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-4">
+    <main className="flex min-h-[60vh] flex-col items-center justify-center p-4">
+      <div className="w-full max-w-md space-y-5">
         <div className="text-center">
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1 className="text-2xl font-semibold tracking-tight text-[#0f172a]">
             Request Housekeeping
           </h1>
           {resolved.site_name && (
-            <p className="text-sm text-muted-foreground mt-1">
-              {resolved.site_name}
-            </p>
+            <p className="guest-text-muted mt-1 text-sm">{resolved.site_name}</p>
           )}
-          <p className="text-sm font-medium text-primary mt-2">
-            Room {resolved.room_label}
-          </p>
+          <p className="mt-2 text-base font-medium text-[#dc2626]">{resolved.room_label}</p>
         </div>
-        <div className="rounded-xl border border-border bg-card shadow-sm p-6">
+        <div className="guest-card rounded-xl border p-6 shadow-sm">
           <PublicTicketForm token={token} roomLabel={resolved.room_label} />
         </div>
       </div>

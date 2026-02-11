@@ -31,13 +31,10 @@ function escapeHtml(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
-/** Show exactly one "Room" – avoid "Room Room 5". Use label as-is if it already starts with "room", else "Room " + label. */
+/** Print the room name as-is (no "Room" prefix). e.g. "Pool" stays "Pool". */
 function formatRoomHeading(roomLabel: string): string {
   const t = (roomLabel ?? "").trim();
-  if (!t) return "Room";
-  const normalized = t.replace(/\s+/g, " ").toLowerCase();
-  if (normalized === "room" || normalized.startsWith("room ")) return t;
-  return "Room " + t;
+  return t || "—";
 }
 
 /** Normalize room_tokens to an array (Supabase can return array or single object; RSC may alter shape). */

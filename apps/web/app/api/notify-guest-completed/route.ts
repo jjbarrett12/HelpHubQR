@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
   const site = (ticket as { site?: { name: string } | { name: string }[] }).site;
   const siteName = Array.isArray(site) ? site[0]?.name : (site as { name: string } | null)?.name;
   const subject = "Your request is complete – " + (siteName ?? "HelpHub");
-  const message = `Your housekeeping request for Room ${(ticket as { room_label_snapshot: string }).room_label_snapshot} has been completed. Thank you.`;
+  const message = `Your housekeeping request for ${(ticket as { room_label_snapshot: string }).room_label_snapshot} has been completed. Thank you.`;
   const fromEmail = process.env.ALERT_FROM_EMAIL || "alerts@example.com";
   const fromName = "HelpHub";
 

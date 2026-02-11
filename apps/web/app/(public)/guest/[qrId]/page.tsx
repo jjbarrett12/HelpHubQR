@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import { GuestRequestForm } from "@/components/GuestRequestForm";
-import { LocationHeader } from "@/components/LocationHeader";
 import { createServiceRoleClient } from "@/lib/supabase/server-admin";
 
 async function resolveQrAndRequestTypes(qrId: string) {
@@ -49,13 +48,26 @@ export default async function GuestPage({
   const logoUrl = branding?.logo_url ?? null;
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <LocationHeader
-        locationIdentifier={resolved.location.identifier}
-        locationType={resolved.location.type}
-        propertyName={resolved.property.name}
-        logoUrl={logoUrl}
-      />
+    <div className="flex min-h-screen flex-col">
+      <header className="guest-card flex items-center justify-between gap-2 border-b px-4 py-3">
+        <div className="flex min-w-0 items-center gap-2">
+          {logoUrl && (
+            <img
+              src={logoUrl}
+              alt=""
+              className="h-8 w-8 shrink-0 rounded object-contain"
+            />
+          )}
+          <div className="min-w-0">
+            <h1 className="truncate font-semibold text-[#0f172a]">
+              {resolved.location.identifier}
+            </h1>
+            {resolved.property.name && (
+              <p className="truncate text-xs guest-text-muted">{resolved.property.name}</p>
+            )}
+          </div>
+        </div>
+      </header>
       <main className="flex-1 p-4">
         <div className="mx-auto max-w-md">
           <GuestRequestForm

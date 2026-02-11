@@ -5,12 +5,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-/** Show room label with a single "Room" prefix (avoids "Room Room4" when label is "Room4"). */
+/** Show room label as-is (no default "Room" prefix). e.g. "Pool" shows "Pool". */
 export function formatRoomDisplay(roomLabel: string | null | undefined): string {
   const s = (roomLabel ?? "").trim();
-  if (!s) return "Room";
-  const m = s.match(/^Room\s*(.*)$/i);
-  return m ? "Room " + (m[1] ?? "").trim() : "Room " + s;
+  return s || "—";
 }
 
 /** Compare two strings in natural order (e.g. Room 2 before Room 10). */

@@ -69,7 +69,7 @@ export default async function SupervisorTaskDetailPage({
         </Button>
         <span className="text-muted-foreground">/</span>
         <h1 className="text-xl font-semibold tracking-tight">
-          {rt?.label ?? rt?.code ?? "Task"} – {loc?.type === "room" ? `Room ${loc?.identifier}` : loc?.identifier}
+          {rt?.label ?? rt?.code ?? "Task"} – {loc?.identifier}
         </h1>
       </nav>
 

@@ -65,7 +65,7 @@ export function MvpQrExportPanel({
           (loc) =>
             `<div class="card">
               <img src="${dataUrls[loc.id] || ""}" alt="" width="200" height="200" />
-              <div class="label">${loc.type === "room" ? `Room ${loc.identifier}` : loc.identifier}</div>
+              <div class="label">${loc.identifier}</div>
               <div class="url">${baseUrl}/q/${loc.qrId}</div>
             </div>`
         )

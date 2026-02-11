@@ -2,7 +2,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createServiceRoleClient } from "@/lib/supabase/server-admin";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { CheckCircle2, Clock, Loader2, XCircle } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -52,51 +51,47 @@ export default async function GuestStatusPage({
   const justSubmitted = isNew && Date.now() - new Date(ticket.created_at).getTime() < 2 * 60 * 1000;
 
   return (
-    <main className="min-h-screen bg-muted/30 flex flex-col items-center justify-center p-4">
-      <Card className="w-full max-w-md border-border shadow-sm">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-            <Icon className="h-8 w-8 text-primary" />
+    <main className="flex min-h-[60vh] flex-col items-center justify-center p-4">
+      <div className="guest-card w-full max-w-md space-y-4 rounded-xl border p-6 shadow-sm">
+        <div className="text-center">
+          <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-[#dc2626]/10">
+            <Icon className="h-8 w-8 text-[#dc2626]" />
           </div>
           {justSubmitted ? (
             <>
-              <h1 className="text-xl font-semibold">Thank you</h1>
-              <p className="text-muted-foreground">
-                Your request has been sent. You can check back here for updates.
-              </p>
+              <h1 className="text-xl font-semibold text-[#0f172a]">Thank you</h1>
+              <p className="guest-text-muted mt-1">Your request has been sent. You can check back here for updates.</p>
             </>
           ) : (
             <>
-              <h1 className="text-xl font-semibold">Your request</h1>
-              <p className="text-muted-foreground">{statusInfo.description}</p>
+              <h1 className="text-xl font-semibold text-[#0f172a]">Your request</h1>
+              <p className="guest-text-muted mt-1">{statusInfo.description}</p>
             </>
           )}
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="rounded-lg border border-border bg-muted/30 p-3 text-sm">
-            <p className="font-medium">Room {ticket.room_label_snapshot}</p>
-            {ticket.request_type && (
-              <p className="text-muted-foreground capitalize">{ticket.request_type}</p>
-            )}
-            <p className="mt-1 text-muted-foreground">
-              Status: <span className="font-medium text-foreground">{statusInfo.label}</span>
-            </p>
-            {ticket.resolved_at && (
-              <p className="mt-1 text-xs text-muted-foreground">
-                Completed {new Date(ticket.resolved_at).toLocaleString()}
-              </p>
-            )}
-          </div>
-          <p className="text-xs text-muted-foreground text-center">
-            This link expires in 48 hours. Bookmark it to check back.
+        </div>
+        <div className="rounded-lg border border-[#e2e8f0] bg-[#f8fafc] p-3 text-sm">
+          <p className="font-medium text-[#0f172a]">{ticket.room_label_snapshot}</p>
+          {ticket.request_type && (
+            <p className="guest-text-muted capitalize">{ticket.request_type}</p>
+          )}
+          <p className="guest-text-muted mt-1">
+            Status: <span className="font-medium text-[#0f172a]">{statusInfo.label}</span>
           </p>
-          <div className="flex justify-center">
-            <Button asChild variant="outline" size="sm">
-              <Link href="/">Done</Link>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+          {ticket.resolved_at && (
+            <p className="mt-1 text-xs guest-text-muted">
+              Completed {new Date(ticket.resolved_at).toLocaleString()}
+            </p>
+          )}
+        </div>
+        <p className="text-center text-xs guest-text-muted">
+          This link expires in 48 hours. Bookmark it to check back.
+        </p>
+        <div className="flex justify-center">
+          <Button asChild variant="outline" size="lg" className="min-h-12">
+            <Link href="/">Done</Link>
+          </Button>
+        </div>
+      </div>
     </main>
   );
 }

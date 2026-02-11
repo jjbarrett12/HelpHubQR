@@ -16,14 +16,15 @@ export default async function AppHomePage() {
   const supabase = await createClient();
   const { data: sites } = await supabase.from("sites").select("id, name").order("name");
 
-  if (!sites?.length) {
+  const sitesList = sites ?? [];
+  if (sitesList.length === 0) {
     const { redirect } = await import("next/navigation");
     redirect("/app/admin/sites");
   }
 
   const weekStart = startOfWeekISO();
   const openCounts = await Promise.all(
-    sites.map(async (site) => {
+    sitesList.map(async (site) => {
       const [{ count: open }, { count: newThisWeek }] = await Promise.all([
         supabase
           .from("tickets")

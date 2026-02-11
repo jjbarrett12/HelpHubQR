@@ -1,6 +1,6 @@
 # Fix 404 on helphubqr.com (Vercel)
 
-If **helphubqr.com** (or your `.vercel.app` URL) shows **404**, the project is building from the wrong folder. This repo is a monorepo: the Next.js app is in **`apps/web`**, not the repo root.
+If **helphubqr.com** (or your `.vercel.app` URL) shows **404**—or you see a blank/hard-to-read page that’s actually a 404—the project is usually building from the wrong folder. This repo is a monorepo: the Next.js app lives in **`apps/web`**, not the repo root.
 
 ## Do this in Vercel (required)
 

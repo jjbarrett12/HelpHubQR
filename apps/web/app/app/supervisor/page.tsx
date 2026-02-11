@@ -134,7 +134,7 @@ export default async function SupervisorPage({
                     <span className="font-medium">{rt?.label ?? rt?.code ?? "Task"}</span>
                     <span className="text-muted-foreground">
                       {" "}
-                      – {loc?.type === "room" ? `Room ${loc?.identifier}` : loc?.identifier}
+                      – {loc?.identifier}
                     </span>
                   </Link>
                 </li>

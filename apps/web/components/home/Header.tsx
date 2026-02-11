@@ -8,47 +8,45 @@ import { Button } from "@/components/ui/button";
 const navLinks = [
   { href: "#features", label: "Features" },
   { href: "#how-it-works", label: "How it works" },
-  { href: "#demo", label: "Demo" },
+  { href: "#demo", label: "Get a demo" },
 ];
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/30 bg-background/80 backdrop-blur-xl">
-      <div className="container mx-auto flex h-14 md:h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md">
+    <header className="sticky top-0 z-50 w-full overflow-visible border-b border-sky-500/20 bg-black/95 backdrop-blur supports-[backdrop-filter]:bg-black/80">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8 overflow-visible">
+        <Link href="/" className="flex items-center shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 rounded-md">
           <Image
             src="/helphub-logo.png"
             alt="HelpHub"
-            width={200}
-            height={56}
-            className="h-11 w-auto object-contain sm:h-12 md:h-14"
+            width={560}
+            height={160}
+            className="h-32 w-auto object-contain object-center md:h-40"
           />
         </Link>
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav className="hidden items-center gap-8 md:flex">
           {navLinks.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+              className="text-sm font-medium text-sky-200/90 transition-colors hover:text-white"
             >
               {label}
             </Link>
           ))}
         </nav>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <ThemeToggle />
           <Button
             asChild
-            size="sm"
-            className="rounded-lg bg-primary px-4 font-semibold text-primary-foreground shadow-sm hover:opacity-95"
+            size="default"
+            className="rounded-md bg-sky-500 font-semibold text-white shadow-lg shadow-sky-500/25 hover:bg-sky-400"
           >
-            <Link href={process.env.NEXT_PUBLIC_CALENDLY_URL || "#demo"} target={process.env.NEXT_PUBLIC_CALENDLY_URL ? "_blank" : undefined} rel={process.env.NEXT_PUBLIC_CALENDLY_URL ? "noopener noreferrer" : undefined}>
-              See it in action
-            </Link>
+            <Link href="#demo">Get a demo</Link>
           </Button>
           <Link
             href="/login"
-            className="hidden rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground sm:inline-block"
+            className="text-sm font-medium text-sky-200/90 hover:text-white"
           >
             Log in
           </Link>

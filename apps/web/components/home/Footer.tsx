@@ -7,7 +7,7 @@ const footerLinks = {
   Product: [
     { href: "#features", label: "Features" },
     { href: "#how-it-works", label: "How it works" },
-    { href: calendlyUrl, label: "See it in action" },
+    { href: "#demo", label: "Get a demo" },
   ],
   Company: [
     { href: "/login", label: "Log in" },
@@ -21,7 +21,7 @@ const footerLinks = {
 
 export function Footer() {
   return (
-    <footer className="border-t border-border/30 bg-muted/20">
+    <footer className="border-t border-sky-500/20 bg-zinc-900/80">
       <div className="container mx-auto px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-2">
@@ -34,21 +34,21 @@ export function Footer() {
                 className="h-12 w-auto object-contain opacity-90 sm:h-14"
               />
             </Link>
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-sky-200/80">
               Streamline housekeeping requests with QR codes. Guests scan, staff respond—simple and fast.
             </p>
           </div>
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground">Product</h3>
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-white">Product</h3>
             <ul className="mt-4 space-y-3">
               {footerLinks.Product.map(({ href, label }) => (
                 <li key={label}>
                   {href.startsWith("http") ? (
-                    <a href={href} target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground transition hover:text-foreground">
+                    <a href={href} target="_blank" rel="noopener noreferrer" className="text-sm text-sky-200/80 transition hover:text-white">
                       {label}
                     </a>
                   ) : (
-                    <Link href={href} className="text-sm text-muted-foreground transition hover:text-foreground">
+                    <Link href={href} className="text-sm text-sky-200/80 transition hover:text-white">
                       {label}
                     </Link>
                   )}
@@ -57,11 +57,11 @@ export function Footer() {
             </ul>
           </div>
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground">Company</h3>
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-white">Company</h3>
             <ul className="mt-4 space-y-3">
               {footerLinks.Company.map(({ href, label }) => (
                 <li key={label}>
-                  <Link href={href} className="text-sm text-muted-foreground transition hover:text-foreground">
+                  <Link href={href} className="text-sm text-sky-200/80 transition hover:text-white">
                     {label}
                   </Link>
                 </li>
@@ -69,11 +69,11 @@ export function Footer() {
             </ul>
           </div>
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground">Legal</h3>
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-white">Legal</h3>
             <ul className="mt-4 space-y-3">
               {footerLinks.Legal.map(({ href, label }) => (
                 <li key={label}>
-                  <Link href={href} className="text-sm text-muted-foreground transition hover:text-foreground">
+                  <Link href={href} className="text-sm text-sky-200/80 transition hover:text-white">
                     {label}
                   </Link>
                 </li>
@@ -81,7 +81,7 @@ export function Footer() {
             </ul>
           </div>
         </div>
-        <div className="mt-12 border-t border-border/30 pt-8 text-center text-xs text-muted-foreground">
+        <div className="mt-12 border-t border-sky-500/20 pt-8 text-center text-xs text-sky-200/60">
           © {new Date().getFullYear()} HelpHub. All rights reserved.
         </div>
       </div>

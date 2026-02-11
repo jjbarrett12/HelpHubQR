@@ -34,7 +34,7 @@ export function LocationHeader({
         )}
         <div className="min-w-0">
           <h1 className="truncate font-semibold text-foreground">
-            {locationType === "room" ? `Room ${locationIdentifier}` : locationIdentifier}
+            {locationIdentifier}
           </h1>
           {propertyName && (
             <p className="truncate text-xs text-muted-foreground">{propertyName}</p>

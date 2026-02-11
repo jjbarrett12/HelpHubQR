@@ -31,7 +31,7 @@ export function PropertyAlertRules({ rules }: { rules: Rule[] }) {
       <p className="text-sm text-muted-foreground mb-3">
         When tasks go overdue, these recipients get an email or SMS. Call the <code className="text-xs">check-sla</code> Edge Function every 10–15 min (e.g. Vercel Cron) to send alerts.
       </p>
-      <form action={addPropertyAlertRule} className="flex flex-wrap items-end gap-2 mb-4">
+      <form action={async (fd) => { await addPropertyAlertRule(fd); }} className="flex flex-wrap items-end gap-2 mb-4">
         <div className="space-y-1">
           <Label htmlFor="channel" className="text-xs">Channel</Label>
           <Select name="channel" required>
@@ -63,7 +63,7 @@ export function PropertyAlertRules({ rules }: { rules: Rule[] }) {
             <span>
               <span className="font-medium">{r.channel}</span> – {r.target}
             </span>
-            <form action={deletePropertyAlertRule}>
+            <form action={async (fd) => { await deletePropertyAlertRule(fd); }}>
               <input type="hidden" name="ruleId" value={r.id} />
               <Button type="submit" variant="ghost" size="sm" className="text-muted-foreground">
                 Remove
