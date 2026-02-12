@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { createServiceRoleClient } from "@/lib/supabase/server-admin";
 import { Button } from "@/components/ui/button";
+import { InvalidLinkBlock } from "@/components/public/InvalidLinkBlock";
 import { CheckCircle2, Clock, Loader2, XCircle } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -28,7 +28,12 @@ export default async function GuestStatusPage({
     .single();
 
   if (!row || new Date(row.expires_at) <= new Date()) {
-    notFound();
+    return (
+      <InvalidLinkBlock
+        message="This status link has expired."
+        hint="Status links expire after 48 hours. Your request is still being handled."
+      />
+    );
   }
 
   const { data: ticket } = await supabase
@@ -38,7 +43,12 @@ export default async function GuestStatusPage({
     .single();
 
   if (!ticket) {
-    notFound();
+    return (
+      <InvalidLinkBlock
+        message="This status link is invalid."
+        hint="You can go home or log in to check on your request."
+      />
+    );
   }
 
   const statusInfo = STATUS_LABELS[ticket.status] ?? {

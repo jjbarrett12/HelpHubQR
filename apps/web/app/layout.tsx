@@ -15,6 +15,10 @@ export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
   title: "HelpHub – Housekeeping Requests",
   description: "Scan the QR in your room to request housekeeping.",
+  icons: {
+    icon: "/icon.svg",
+    apple: "/icon.svg",
+  },
   openGraph: {
     title: "HelpHub – Housekeeping Requests",
     description: "Scan the QR in your room to request housekeeping.",

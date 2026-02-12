@@ -53,3 +53,36 @@ export const createSite = async (formData: FormData) => {
   revalidatePath("/app");
   return { ok: true };
 };
+
+export type DeleteSiteResult = { ok: true } | { ok: false; error: string };
+
+export const deleteSite = async (siteId: string): Promise<DeleteSiteResult> => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "Not authenticated" };
+
+  const { data: site } = await supabase
+    .from("sites")
+    .select("id, tenant_id, name")
+    .eq("id", siteId)
+    .single();
+  if (!site) return { ok: false, error: "Customer not found or access denied" };
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("tenant_id")
+    .eq("user_id", user.id)
+    .single();
+  if (!profile || profile.tenant_id !== site.tenant_id) {
+    return { ok: false, error: "Customer not found or access denied" };
+  }
+
+  const { error } = await supabase.from("sites").delete().eq("id", siteId);
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath("/app/admin/sites");
+  revalidatePath("/app");
+  return { ok: true };
+};

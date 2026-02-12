@@ -1,5 +1,5 @@
-import { notFound } from "next/navigation";
 import { GuestRequestForm } from "@/components/GuestRequestForm";
+import { InvalidLinkBlock } from "@/components/public/InvalidLinkBlock";
 import { createServiceRoleClient } from "@/lib/supabase/server-admin";
 
 async function resolveQrAndRequestTypes(qrId: string) {
@@ -41,8 +41,23 @@ export default async function GuestPage({
   params: Promise<{ qrId: string }>;
 }) {
   const { qrId } = await params;
+  if (!qrId?.trim()) {
+    return (
+      <InvalidLinkBlock
+        message="This QR link is invalid."
+        hint="Scan the QR code again or ask the front desk for assistance."
+      />
+    );
+  }
   const resolved = await resolveQrAndRequestTypes(qrId);
-  if (!resolved) notFound();
+  if (!resolved) {
+    return (
+      <InvalidLinkBlock
+        message="This QR link is invalid or expired."
+        hint="Scan the QR code in your room again, or ask the front desk for assistance."
+      />
+    );
+  }
 
   const branding = resolved.property.branding as { logo_url?: string | null } | undefined;
   const logoUrl = branding?.logo_url ?? null;

@@ -43,6 +43,7 @@ export async function middleware(request: NextRequest) {
   return response;
 }
 
+// Only run for app and platform-admin. Public routes (/t/, /q/, /guest/, /login, /, /ping) are NOT matched – no auth required.
 export const config = {
   matcher: ["/app/:path*", "/platform-admin/:path*"],
 };

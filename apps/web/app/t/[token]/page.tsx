@@ -1,5 +1,5 @@
-import { notFound } from "next/navigation";
 import { PublicTicketForm } from "@/components/public/PublicTicketForm";
+import { InvalidLinkBlock } from "@/components/public/InvalidLinkBlock";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 
@@ -23,8 +23,23 @@ export default async function PublicTicketPage({
   params: Promise<{ token: string }>;
 }) {
   const { token } = await params;
+  if (!token?.trim()) {
+    return (
+      <InvalidLinkBlock
+        message="Room link is missing or invalid."
+        hint="Scan the QR code in your room again, or ask the front desk for a new one."
+      />
+    );
+  }
   const resolved = await resolveToken(token);
-  if (!resolved) notFound();
+  if (!resolved) {
+    return (
+      <InvalidLinkBlock
+        message="This room link is invalid or expired."
+        hint="Scan the QR code in your room again, or ask the front desk for assistance."
+      />
+    );
+  }
 
   return (
     <main className="flex min-h-[60vh] flex-col items-center justify-center p-4">
