@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { getDefaultTenantIdForUser, isTenantDashboardAdmin } from "@/lib/tenant-auth/context";
 
 const LOGO_BUCKET = "site-logos";
 const TENANT_LOGO_PREFIX = "tenant-logos";
@@ -22,12 +23,9 @@ export async function updateTenantLogo(formData: FormData) {
   } = await supabase.auth.getUser();
   if (!user) return { error: "Not authenticated" };
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("tenant_id, role")
-    .eq("user_id", user.id)
-    .single();
-  if (!profile?.tenant_id || profile.role !== "admin") {
+  const defaultTenantId = await getDefaultTenantIdForUser(supabase, user.id);
+  const canBrand = defaultTenantId ? await isTenantDashboardAdmin(supabase, user.id, defaultTenantId) : false;
+  if (!defaultTenantId || !canBrand) {
     return { error: "Only tenant admins can update branding." };
   }
 
@@ -35,7 +33,7 @@ export async function updateTenantLogo(formData: FormData) {
   if (file && file.size > 0) {
 
   const ext = file.name.split(".").pop()?.toLowerCase() || "png";
-  const path = `${TENANT_LOGO_PREFIX}/${profile.tenant_id}.${ext}`;
+  const path = `${TENANT_LOGO_PREFIX}/${defaultTenantId}.${ext}`;
 
   const { error: uploadError } = await supabase.storage
     .from(LOGO_BUCKET)
@@ -46,7 +44,7 @@ export async function updateTenantLogo(formData: FormData) {
   const { error: updateError } = await supabase
     .from("tenants")
     .update({ logo_url: urlData.publicUrl })
-    .eq("id", profile.tenant_id);
+    .eq("id", defaultTenantId);
   if (updateError) return { error: updateError.message };
 
   revalidatePath("/app", "layout");
@@ -60,7 +58,7 @@ export async function updateTenantLogo(formData: FormData) {
   const { error: updateError } = await supabase
     .from("tenants")
     .update({ logo_url: urlToSet })
-    .eq("id", profile.tenant_id);
+    .eq("id", defaultTenantId);
   if (updateError) return { error: updateError.message };
   revalidatePath("/app", "layout");
   revalidatePath("/app/settings");
@@ -72,12 +70,9 @@ export async function updateTenantBranding(formData: FormData) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Not authenticated" };
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("tenant_id, role")
-    .eq("user_id", user.id)
-    .single();
-  if (!profile?.tenant_id || profile.role !== "admin") {
+  const defaultTenantId = await getDefaultTenantIdForUser(supabase, user.id);
+  const canBrand = defaultTenantId ? await isTenantDashboardAdmin(supabase, user.id, defaultTenantId) : false;
+  if (!defaultTenantId || !canBrand) {
     return { error: "Only tenant admins can update branding." };
   }
 
@@ -85,16 +80,41 @@ export async function updateTenantBranding(formData: FormData) {
   const { data: tenant } = await supabase
     .from("tenants")
     .select("branding")
-    .eq("id", profile.tenant_id)
+    .eq("id", defaultTenantId)
     .single();
   const branding = (tenant?.branding as Record<string, unknown>) ?? {};
   const newBranding = { ...branding, primary_color: primaryColor && /^#[0-9A-Fa-f]{6}$/.test(primaryColor) ? primaryColor : null };
   const { error } = await supabase
     .from("tenants")
     .update({ branding: newBranding })
-    .eq("id", profile.tenant_id);
+    .eq("id", defaultTenantId);
   if (error) return { error: error.message };
   revalidatePath("/app", "layout");
   revalidatePath("/app/settings");
   return { ok: true };
+}
+
+export async function markTenantOnboardingComplete() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Not authenticated" };
+
+  const defaultTenantId = await getDefaultTenantIdForUser(supabase, user.id);
+  const can = defaultTenantId ? await isTenantDashboardAdmin(supabase, user.id, defaultTenantId) : false;
+  if (!defaultTenantId || !can) {
+    return { error: "Only tenant admins can update onboarding status." };
+  }
+
+  const now = new Date().toISOString();
+  const { error } = await supabase
+    .from("tenant_onboarding")
+    .update({ status: "completed", completed_at: now, updated_at: now })
+    .eq("tenant_id", defaultTenantId);
+  if (error) return { error: error.message };
+  revalidatePath("/app");
+  revalidatePath("/app/settings");
+  revalidatePath("/app/dashboard");
+  return { ok: true as const };
 }

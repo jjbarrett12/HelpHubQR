@@ -37,7 +37,7 @@ export default async function SupervisorReportsPage() {
         </Button>
         <span className="text-muted-foreground">/</span>
         <Button variant="ghost" size="sm" asChild>
-          <Link href="/app/supervisor">Supervisor</Link>
+          <Link href="/app/checklist-runs">Runs</Link>
         </Button>
         <span className="text-muted-foreground">/</span>
         <h1 className="text-2xl font-semibold tracking-tight">Reports</h1>

@@ -13,7 +13,7 @@ export function HomeRedirect() {
     const supabase = createClient();
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (cancelled) return;
-      if (session?.user) router.replace("/app");
+      if (session?.user) router.replace("/app/today");
     });
     return () => {
       cancelled = true;

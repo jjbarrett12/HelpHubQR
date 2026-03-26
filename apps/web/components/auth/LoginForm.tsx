@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { safePostLoginPath } from "@/lib/nav/safe-post-login-path";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,6 +11,8 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 export function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const afterLogin = safePostLoginPath(searchParams.get("next"));
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,7 +38,7 @@ export function LoginForm() {
         return;
       }
       if (data?.user?.confirmed_at) {
-        router.push("/app");
+        router.push("/app/today");
         router.refresh();
         return;
       }
@@ -48,7 +51,7 @@ export function LoginForm() {
       setLoading(false);
       return;
     }
-    router.push("/app");
+    router.push(afterLogin);
     router.refresh();
   }
 

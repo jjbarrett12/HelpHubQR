@@ -38,7 +38,7 @@ export default async function GuestStatusPage({
 
   const { data: ticket } = await supabase
     .from("tickets")
-    .select("id, status, room_label_snapshot, request_type, created_at, resolved_at")
+    .select("id, status, room_label_snapshot, request_type_label_snapshot, created_at, resolved_at")
     .eq("id", row.ticket_id)
     .single();
 
@@ -81,8 +81,8 @@ export default async function GuestStatusPage({
         </div>
         <div className="rounded-lg border border-[#e2e8f0] bg-[#f8fafc] p-3 text-sm">
           <p className="font-medium text-[#0f172a]">{ticket.room_label_snapshot}</p>
-          {ticket.request_type && (
-            <p className="guest-text-muted capitalize">{ticket.request_type}</p>
+          {ticket.request_type_label_snapshot && (
+            <p className="guest-text-muted capitalize">{ticket.request_type_label_snapshot}</p>
           )}
           <p className="guest-text-muted mt-1">
             Status: <span className="font-medium text-[#0f172a]">{statusInfo.label}</span>

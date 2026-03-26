@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServiceRoleClient } from "@/lib/supabase/server-admin";
 import { tasksCreateBodySchema } from "@/lib/validation/schemas";
-import { checkGuestCreateRateLimit, rateLimitKey } from "@/lib/rateLimit";
+import { rateLimitKey } from "@/lib/rateLimit";
+import { checkGuestRateLimitDistributed } from "@/lib/rateLimitDistributed";
 
 export async function POST(request: NextRequest) {
   let body: unknown;
@@ -20,7 +21,8 @@ export async function POST(request: NextRequest) {
   const deviceId = bodyDeviceId ?? request.headers.get("x-device-id") ?? null;
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? request.headers.get("x-real-ip") ?? null;
   const key = rateLimitKey(qrId, deviceId, ip);
-  if (!checkGuestCreateRateLimit(key)) {
+  const rl = await checkGuestRateLimitDistributed(key);
+  if (!rl.allowed) {
     return NextResponse.json({ error: "Too many requests. Please try again in a few minutes." }, { status: 429 });
   }
   const supabase = createServiceRoleClient();

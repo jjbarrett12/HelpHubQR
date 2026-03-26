@@ -127,14 +127,14 @@ export default function QEntryPage() {
   const locationLabel = resolve.location.identifier;
 
   return (
-    <div className="flex min-h-[60vh] flex-col items-center justify-center gap-8 p-6">
-      <div className="w-full max-w-sm text-center">
-        <h1 className="text-2xl font-semibold tracking-tight text-[#0f172a]">
+    <div className="mx-auto flex min-h-[60vh] w-full max-w-lg flex-col items-stretch justify-center gap-8 p-6 sm:max-w-2xl sm:gap-10 md:max-w-4xl md:flex-row md:items-center md:justify-center md:gap-14 lg:max-w-5xl lg:gap-20">
+      <div className="w-full text-center md:max-w-sm md:flex-1 md:text-left lg:max-w-md">
+        <h1 className="text-2xl font-semibold tracking-tight text-[#0f172a] sm:text-3xl md:text-3xl">
           {propertyName}
         </h1>
-        <p className="mt-2 guest-text-muted text-base">{locationLabel}</p>
+        <p className="mt-2 guest-text-muted text-base sm:text-lg">{locationLabel}</p>
       </div>
-      <div className="flex w-full max-w-sm flex-col gap-4">
+      <div className="flex w-full max-w-sm flex-col gap-4 md:max-w-xs md:flex-1 lg:max-w-sm">
         <Button
           size="lg"
           className="h-14 w-full min-h-14 rounded-xl text-base font-semibold"
@@ -152,8 +152,8 @@ export default function QEntryPage() {
       </div>
 
       {staffModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="guest-card w-full max-w-sm rounded-xl border p-5 shadow-lg">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 sm:p-6">
+          <div className="guest-card w-full max-w-sm rounded-xl border p-5 shadow-lg sm:max-w-md md:max-w-lg">
             <h2 className="text-lg font-semibold text-[#0f172a]">Staff sign-in</h2>
             <p className="mt-1 text-sm guest-text-muted">Enter your shift key or PIN.</p>
             <form onSubmit={handleStaffKeySubmit} className="mt-4 space-y-3">

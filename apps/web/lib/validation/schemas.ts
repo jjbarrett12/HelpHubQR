@@ -50,3 +50,88 @@ export type TasksCreateBody = z.infer<typeof tasksCreateBodySchema>;
 export type TasksListQuery = z.infer<typeof tasksListQuerySchema>;
 export type TasksEventBody = z.infer<typeof tasksEventBodySchema>;
 export type UploadSignBody = z.infer<typeof uploadSignBodySchema>;
+
+/** Server action / API: `hh_shift_checklist_run_item_mutate` wrapper */
+export const shiftChecklistRunItemMutateActionSchema = z.enum([
+  "complete",
+  "reopen",
+  "set_proof",
+  "set_note",
+  "flag_problem",
+  "request_help",
+  "clear_problem",
+  "clear_help",
+]);
+
+export const shiftChecklistRunItemMutateBodySchema = z.object({
+  /** Native / Bearer clients: same org as `GET /api/employee/today?organizationId=` (optional for cookie session web). */
+  organizationId: z.string().uuid().optional(),
+  runItemId: z.string().uuid(),
+  action: shiftChecklistRunItemMutateActionSchema,
+  payload: z
+    .object({
+      expected_updated_at: z.string().optional(),
+      storage_path: z.string().max(2048).optional(),
+      note: z.string().max(2000).optional(),
+      message: z.string().max(2000).optional(),
+    })
+    .strict()
+    .optional(),
+});
+
+export type ShiftChecklistRunItemMutateBody = z.infer<typeof shiftChecklistRunItemMutateBodySchema>;
+
+/** Server action / API: `hh_shift_run_override_task_mutate` wrapper */
+export const shiftRunOverrideTaskMutateActionSchema = z.enum([
+  "complete",
+  "reopen",
+  "set_proof",
+  "set_note",
+  "flag_problem",
+  "request_help",
+  "clear_problem",
+  "clear_help",
+]);
+
+export const shiftRunOverrideTaskMutateBodySchema = z.object({
+  organizationId: z.string().uuid().optional(),
+  overrideTaskId: z.string().uuid(),
+  action: shiftRunOverrideTaskMutateActionSchema,
+  payload: z
+    .object({
+      expected_updated_at: z.string().optional(),
+      storage_path: z.string().max(2048).optional(),
+      note: z.string().max(2000).optional(),
+      message: z.string().max(2000).optional(),
+    })
+    .strict()
+    .optional(),
+});
+
+export type ShiftRunOverrideTaskMutateBody = z.infer<typeof shiftRunOverrideTaskMutateBodySchema>;
+
+/** POST /api/helphub/checklist-proof-upload/sign — employee checklist proof (run item or override). */
+export const checklistProofUploadSignBodySchema = z
+  .object({
+    organizationId: z.string().uuid(),
+    contentType: z.string().regex(/^image\//, "Content-Type must be image/*"),
+    runItemId: z.string().uuid().optional(),
+    overrideTaskId: z.string().uuid().optional(),
+  })
+  .strict()
+  .refine((b) => (b.runItemId != null) !== (b.overrideTaskId != null), {
+    message: "Exactly one of runItemId or overrideTaskId is required",
+  });
+
+export type ChecklistProofUploadSignBody = z.infer<typeof checklistProofUploadSignBodySchema>;
+
+/** Server action: manager shift briefing (`public.shift_notes`). */
+export const shiftBriefingNoteBodySchema = z
+  .object({
+    employeeShiftId: z.string().uuid(),
+    note: z.string().trim().min(1, "Note is required").max(4000, "Note must be at most 4000 characters"),
+    visibleToEmployee: z.boolean().optional().default(true),
+  })
+  .strict();
+
+export type ShiftBriefingNoteBody = z.infer<typeof shiftBriefingNoteBodySchema>;

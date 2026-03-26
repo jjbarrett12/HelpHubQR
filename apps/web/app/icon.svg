@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <defs>
+    <linearGradient id="bubble" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+  </defs>
+  <!-- Speech bubble shape -->
+  <path fill="url(#bubble)" d="M6 4h20a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H12l-4 4v-4H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>
+  <!-- 2x2 grid inside bubble -->
+  <rect x="10" y="9" width="6" height="6" rx="1" fill="#0c4a6e"/>
+  <rect x="18" y="9" width="6" height="6" rx="1" fill="#0c4a6e"/>
+  <rect x="10" y="17" width="6" height="6" rx="1" fill="#0c4a6e"/>
+  <rect x="18" y="17" width="6" height="6" rx="1" fill="#0c4a6e"/>
+  <!-- Small sparkle -->
+  <circle cx="8" cy="8" r="1" fill="#7dd3fc"/>
+</svg>

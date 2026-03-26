@@ -9,9 +9,23 @@ export type TaskListProps = {
   onComplete?: (taskId: string) => void;
   onEscalate?: (taskId: string) => void;
   disabled?: boolean;
+  /** Extra classes for the empty state only */
   className?: string;
+  /** Applied to the task grid (e.g. md:grid-cols-2 on tablet) */
+  gridClassName?: string;
   emptyMessage?: string;
 };
+
+function sortTasksForStaff(a: TaskCardTask, b: TaskCardTask): number {
+  const score = (t: TaskCardTask) => {
+    if (t.status === "completed" || t.status === "canceled") return 2;
+    if (t.status === "in_progress") return 0;
+    return 1;
+  };
+  const ds = score(a) - score(b);
+  if (ds !== 0) return ds;
+  return new Date(b.last_event_at || b.created_at).getTime() - new Date(a.last_event_at || a.created_at).getTime();
+}
 
 export function TaskList({
   tasks,
@@ -20,18 +34,27 @@ export function TaskList({
   onEscalate,
   disabled,
   className,
+  gridClassName,
   emptyMessage = "No tasks for this location.",
 }: TaskListProps) {
   if (!tasks.length) {
     return (
-      <div className={cn("rounded-lg border border-dashed bg-muted/20 px-4 py-8 text-center text-muted-foreground", className)}>
+      <div
+        className={cn(
+          "rounded-2xl border border-dashed border-border/80 bg-muted/15 px-4 py-12 text-center text-muted-foreground text-sm",
+          className
+        )}
+      >
         {emptyMessage}
       </div>
     );
   }
+
+  const sorted = [...tasks].sort(sortTasksForStaff);
+
   return (
-    <ul className={cn("space-y-3", className)}>
-      {tasks.map((task) => (
+    <ul className={cn("grid grid-cols-1 gap-4", gridClassName)}>
+      {sorted.map((task) => (
         <li key={task.id}>
           <TaskCard
             task={task}

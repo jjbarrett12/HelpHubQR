@@ -17,15 +17,18 @@ export default async function SiteDashboardPage({
   const supabase = await createClient();
   const { data: site } = await supabase
     .from("sites")
-    .select("id, name")
+    .select("id, name, archived_at")
     .eq("id", siteId)
     .single();
   if (!site) notFound();
+
+  const siteArchived = site.archived_at != null;
 
   const { data: roomsRaw } = await supabase
     .from("rooms")
     .select("id, room_label")
     .eq("site_id", siteId)
+    .is("archived_at", null)
     .order("room_label");
   const rooms = (roomsRaw ?? []).sort((a, b) =>
     naturalCompare(a.room_label ?? "", b.room_label ?? "")
@@ -35,7 +38,14 @@ export default async function SiteDashboardPage({
     <div className="min-h-full">
       <header className="sticky top-0 z-10 border-b border-border/50 bg-[var(--app-bg)]/80 backdrop-blur-md px-6 py-5">
         <div className="flex items-center justify-between flex-wrap gap-3">
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">{site.name}</h1>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">{site.name}</h1>
+            {siteArchived && (
+              <p className="mt-1 text-sm text-amber-700 dark:text-amber-400">
+                This customer is archived. Ticket history is read-only; new requests are disabled.
+              </p>
+            )}
+          </div>
           <EnablePushNotifications siteId={siteId} />
         </div>
       </header>
@@ -49,10 +59,12 @@ export default async function SiteDashboardPage({
             <div className="flex flex-wrap items-center gap-3">
               <ExportTicketsButton siteId={siteId} />
               <AddTicketDialog
-              siteId={siteId}
-              siteName={site.name}
-              rooms={rooms}
-            />
+                siteId={siteId}
+                siteName={site.name}
+                rooms={rooms}
+                disabled={siteArchived}
+                disabledReason={siteArchived ? "Archived customers cannot receive new tickets." : undefined}
+              />
               <TicketFilters siteId={siteId} />
             </div>
           </div>

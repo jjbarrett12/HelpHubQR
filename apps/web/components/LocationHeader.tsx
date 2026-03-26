@@ -20,7 +20,7 @@ export function LocationHeader({
   return (
     <header
       className={cn(
-        "flex items-center justify-between gap-2 border-b bg-card px-4 py-3",
+        "flex min-w-0 items-center justify-between gap-2 border-b border-border/60 bg-card px-4 py-3 sm:px-5",
         className
       )}
     >

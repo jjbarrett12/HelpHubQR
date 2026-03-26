@@ -48,7 +48,9 @@ export function EnablePushNotifications({ siteId }: { siteId: string }) {
     setLoading(true);
     try {
       if (!VAPID_PUBLIC_KEY) {
-        setMessage("Push not configured: set NEXT_PUBLIC_VAPID_PUBLIC_KEY (same as VAPID_PUBLIC_KEY in Supabase secrets).");
+        setMessage(
+          "Push not configured: add NEXT_PUBLIC_VAPID_PUBLIC_KEY to apps/web/.env.local (same value as VAPID_PUBLIC_KEY in Supabase Edge secrets). See apps/web/ENV_SETUP.md."
+        );
         return;
       }
       if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
@@ -121,22 +123,36 @@ export function EnablePushNotifications({ siteId }: { siteId: string }) {
     );
   }
 
+  const vapidConfigured = Boolean(VAPID_PUBLIC_KEY);
+
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        onClick={handleEnable}
-        disabled={loading}
-      >
-        <BellOff className="h-4 w-4 mr-1" />
-        {loading ? "Enabling…" : "Enable push notifications"}
-      </Button>
-      {message && (
-        <span className={`text-xs max-w-xs ${message.startsWith("Notifications enabled") ? "text-green-600 dark:text-green-400" : "text-muted-foreground"}`}>
-          {message}
-        </span>
+    <div className="flex flex-col gap-1">
+      <div className="flex flex-wrap items-center gap-2">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={handleEnable}
+          disabled={loading || !vapidConfigured}
+        >
+          <BellOff className="h-4 w-4 mr-1" />
+          {loading ? "Enabling…" : "Enable push notifications"}
+        </Button>
+        {message && (
+          <span
+            className={`text-xs max-w-xs ${message.startsWith("Notifications enabled") ? "text-green-600 dark:text-green-400" : "text-muted-foreground"}`}
+          >
+            {message}
+          </span>
+        )}
+      </div>
+      {!vapidConfigured && (
+        <p className="text-xs text-muted-foreground max-w-md">
+          Push not configured: set <code className="rounded bg-muted px-1 py-0.5">NEXT_PUBLIC_VAPID_PUBLIC_KEY</code> in{" "}
+          <code className="rounded bg-muted px-1 py-0.5">apps/web/.env.local</code> (same as{" "}
+          <code className="rounded bg-muted px-1 py-0.5">VAPID_PUBLIC_KEY</code> in Supabase Edge secrets). See{" "}
+          <code className="rounded bg-muted px-1 py-0.5">apps/web/ENV_SETUP.md</code>.
+        </p>
       )}
     </div>
   );

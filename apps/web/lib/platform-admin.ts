@@ -1,18 +1,19 @@
 import { createClient } from "@/lib/supabase/server";
 import { createServiceRoleClient } from "@/lib/supabase/server-admin";
+import { isPlatformAdminUser } from "@/lib/tenant-auth/context";
 
 export async function requirePlatformAdmin() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return null;
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("is_platform_admin")
-    .eq("user_id", user.id)
-    .single();
-  if (!profile?.is_platform_admin) return null;
+  const isAdmin = await isPlatformAdminUser(supabase, user.id);
+  if (!isAdmin) return null;
   return { user, supabase };
 }
+
+export type TenantMemberRow = { user_id: string; role: string; status: string };
 
 export type TenantWithProfiles = {
   id: string;
@@ -22,7 +23,9 @@ export type TenantWithProfiles = {
   billing_name: string | null;
   billing_address: string | null;
   created_at: string;
+  /** @deprecated use `members` — kept for gradual UI migration */
   profiles: { user_id: string; role: string }[];
+  members: TenantMemberRow[];
   userEmails: Record<string, string>;
 };
 
@@ -36,11 +39,22 @@ export async function getTenantWithUserEmails(tenantId: string): Promise<TenantW
     .eq("id", tenantId)
     .single();
   if (tenantError || !tenant) return null;
-  const { data: profiles } = await supabase
-    .from("profiles")
-    .select("user_id, role")
-    .eq("tenant_id", tenantId);
-  const userIds = (profiles ?? []).map((p) => p.user_id);
+
+  const { data: membershipRows } = await supabase
+    .from("tenant_memberships")
+    .select("user_id, role, status")
+    .eq("tenant_id", tenantId)
+    .in("status", ["active", "invited"]);
+
+  const members: TenantMemberRow[] = (membershipRows ?? []).map((r) => ({
+    user_id: r.user_id as string,
+    role: r.role as string,
+    status: r.status as string,
+  }));
+
+  const profiles = members.filter((m) => m.status === "active").map((m) => ({ user_id: m.user_id, role: m.role }));
+
+  const userIds = [...new Set(members.map((m) => m.user_id))];
   const admin = createServiceRoleClient();
   const userEmails: Record<string, string> = {};
   await Promise.all(
@@ -49,9 +63,11 @@ export async function getTenantWithUserEmails(tenantId: string): Promise<TenantW
       if (data?.user?.email) userEmails[id] = data.user.email;
     })
   );
+
   return {
     ...tenant,
-    profiles: profiles ?? [],
+    profiles,
+    members,
     userEmails,
   };
 }

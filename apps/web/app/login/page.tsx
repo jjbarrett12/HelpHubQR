@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Suspense } from "react";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { LoginRedirect } from "@/components/LoginRedirect";
 
@@ -12,7 +13,9 @@ export default function LoginPage() {
   const configured = isSupabaseConfigured();
   return (
     <>
-      <LoginRedirect />
+      <Suspense fallback={null}>
+        <LoginRedirect />
+      </Suspense>
     <main
       className="min-h-screen flex flex-col items-center pt-[12vh] p-4"
       style={{
@@ -44,7 +47,9 @@ export default function LoginPage() {
             <p className="text-center text-sm text-neutral-600 mb-4">
               Staff sign in
             </p>
-            <LoginForm />
+            <Suspense fallback={<p className="text-center text-sm text-neutral-500">Loading…</p>}>
+              <LoginForm />
+            </Suspense>
           </div>
         </div>
       </div>

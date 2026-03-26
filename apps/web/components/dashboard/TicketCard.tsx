@@ -38,8 +38,8 @@ export function TicketCard({ ticket }: { ticket: TicketRow }) {
           </div>
         </CardHeader>
         <CardContent className="pt-0">
-          {ticket.request_type && (
-            <p className="text-sm text-muted-foreground">{ticket.request_type}</p>
+          {ticket.request_type_label_snapshot && (
+            <p className="text-sm text-muted-foreground">{ticket.request_type_label_snapshot}</p>
           )}
           <p className="text-sm line-clamp-2">{ticket.note}</p>
         </CardContent>

@@ -7,7 +7,7 @@ export default async function AdminSitesPage() {
   const supabase = await createClient();
   const { data: sites } = await supabase
     .from("sites")
-    .select("id, name, address, logo_url, room_count, created_at")
+    .select("id, name, address, logo_url, room_count, created_at, archived_at")
     .order("name");
 
   return (

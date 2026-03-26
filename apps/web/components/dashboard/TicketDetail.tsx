@@ -18,11 +18,19 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import { ArrowLeft, UserPlus, MessageSquare } from "lucide-react";
 import { formatRoomDisplay } from "@/lib/utils";
+import { formatTicketDbError } from "@/lib/tickets/db-error";
+import {
+  TICKET_EVENT,
+  ticketEventTypeLabel,
+  ticketStatusTransitionEventType,
+} from "@/lib/tickets/event-types";
 
 type Ticket = {
   id: string;
   room_label_snapshot: string;
-  request_type: string | null;
+  site_name_snapshot: string | null;
+  floor_snapshot: string | null;
+  request_type_label_snapshot: string | null;
   note: string;
   status: string;
   priority: string;
@@ -43,6 +51,32 @@ type Event = {
   actor_user_id: string | null;
 };
 
+function timelineEventLabel(ev: Event): string {
+  switch (ev.event_type) {
+    case "created":
+      return "Ticket created";
+    case "assigned":
+      return "Ticket claimed";
+    case "comment_added":
+      return "Comment";
+    case "status_changed":
+      return `Status: ${(ev.payload?.from as string) ?? "?"} → ${(ev.payload?.to as string) ?? "?"}`;
+    case "resolved":
+    case "cancelled":
+    case "reopened":
+      return ticketEventTypeLabel(ev.event_type);
+    default:
+      return ticketEventTypeLabel(ev.event_type);
+  }
+}
+
+function timelineNoteBody(ev: Event): string | null {
+  if (ev.event_type === "comment_added") {
+    return (ev.payload?.note as string) ?? null;
+  }
+  return null;
+}
+
 export function TicketDetail({
   ticket,
   events,
@@ -54,44 +88,73 @@ export function TicketDetail({
   const [status, setStatus] = useState(ticket.status);
   const [internalNote, setInternalNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [mutationError, setMutationError] = useState<string | null>(null);
 
   const supabase = createClient();
 
   async function handleClaim() {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return;
+    setMutationError(null);
     setSubmitting(true);
-    await supabase
+    const { error: updErr } = await supabase
       .from("tickets")
       .update({
         assigned_to: user.id,
         assigned_at: new Date().toISOString(),
       })
       .eq("id", ticket.id);
-    await supabase.from("ticket_events").insert({
+    if (updErr) {
+      setMutationError(formatTicketDbError(updErr.message));
+      setSubmitting(false);
+      return;
+    }
+    const { error: evErr } = await supabase.from("ticket_events").insert({
       ticket_id: ticket.id,
       actor_user_id: user.id,
       event_type: "assigned",
       payload: { assigned_to: user.id },
     });
+    if (evErr) {
+      setMutationError(formatTicketDbError(evErr.message));
+      setSubmitting(false);
+      return;
+    }
     setSubmitting(false);
     router.refresh();
   }
 
   async function handleStatusChange(newStatus: string) {
+    setMutationError(null);
     setStatus(newStatus);
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     const updates: Record<string, unknown> = { status: newStatus };
     if (newStatus === "resolved") {
       updates.resolved_at = new Date().toISOString();
     }
-    await supabase.from("tickets").update(updates).eq("id", ticket.id);
-    await supabase.from("ticket_events").insert({
+    const { error: updErr } = await supabase.from("tickets").update(updates).eq("id", ticket.id);
+    if (updErr) {
+      setStatus(ticket.status);
+      setMutationError(formatTicketDbError(updErr.message));
+      return;
+    }
+
+    const eventType = ticketStatusTransitionEventType(ticket.status, newStatus);
+    const { error: evErr } = await supabase.from("ticket_events").insert({
       ticket_id: ticket.id,
       actor_user_id: user?.id ?? null,
-      event_type: "status_changed",
+      event_type: eventType,
       payload: { from: ticket.status, to: newStatus },
     });
+    if (evErr) {
+      setMutationError(formatTicketDbError(evErr.message));
+      return;
+    }
+
     try {
       await fetch("/api/audit-log", {
         method: "POST",
@@ -123,13 +186,19 @@ export function TicketDetail({
   async function handleAddNote(e: React.FormEvent) {
     e.preventDefault();
     if (!internalNote.trim()) return;
-    const { data: { user } } = await supabase.auth.getUser();
-    await supabase.from("ticket_events").insert({
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const { error } = await supabase.from("ticket_events").insert({
       ticket_id: ticket.id,
       actor_user_id: user?.id ?? null,
-      event_type: "internal_note",
+      event_type: TICKET_EVENT.comment_added,
       payload: { note: internalNote.trim() },
     });
+    if (error) {
+      setMutationError(formatTicketDbError(error.message));
+      return;
+    }
     setInternalNote("");
     router.refresh();
   }
@@ -161,23 +230,38 @@ export function TicketDetail({
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          {ticket.request_type && (
+          {mutationError && (
+            <p
+              className="text-sm text-destructive rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2"
+              role="alert"
+            >
+              {mutationError}
+            </p>
+          )}
+          {ticket.request_type_label_snapshot && (
             <p className="text-sm text-muted-foreground">
-              Type: {ticket.request_type}
+              Type: {ticket.request_type_label_snapshot}
+            </p>
+          )}
+          {(ticket.site_name_snapshot || ticket.floor_snapshot) && (
+            <p className="text-xs text-muted-foreground space-x-2">
+              {ticket.site_name_snapshot && (
+                <span>Site (at submission): {ticket.site_name_snapshot}</span>
+              )}
+              {ticket.floor_snapshot != null && String(ticket.floor_snapshot).trim() !== "" && (
+                <span>· Floor: {ticket.floor_snapshot}</span>
+              )}
             </p>
           )}
           <p className="text-sm">{ticket.note}</p>
           <p className="text-xs text-muted-foreground">
-            Created {formatDistanceToNow(new Date(ticket.created_at), { addSuffix: true })} via {ticket.created_via}
+            Created {formatDistanceToNow(new Date(ticket.created_at), { addSuffix: true })} via{" "}
+            {ticket.created_via}
           </p>
 
           <div className="flex flex-wrap gap-2 pt-2">
             {!ticket.assigned_to && (
-              <Button
-                size="sm"
-                onClick={handleClaim}
-                disabled={submitting}
-              >
+              <Button size="sm" onClick={handleClaim} disabled={submitting}>
                 <UserPlus className="h-4 w-4 mr-1" />
                 Claim ticket
               </Button>
@@ -229,17 +313,8 @@ export function TicketDetail({
         <CardContent>
           <ul className="space-y-4 text-sm" role="list">
             {events.map((ev) => {
-              const label =
-                ev.event_type === "created"
-                  ? "Ticket created"
-                  : ev.event_type === "assigned"
-                    ? "Ticket claimed"
-                    : ev.event_type === "status_changed"
-                      ? `Status: ${(ev.payload?.from as string) ?? "?"} → ${(ev.payload?.to as string) ?? "?"}`
-                      : ev.event_type === "internal_note"
-                        ? "Internal note"
-                        : ev.event_type;
-              const noteBody = ev.event_type === "internal_note" ? (ev.payload?.note as string) : null;
+              const label = timelineEventLabel(ev);
+              const noteBody = timelineNoteBody(ev);
               return (
                 <li key={ev.id} className="flex gap-3">
                   <span className="text-muted-foreground shrink-0 text-xs mt-0.5">

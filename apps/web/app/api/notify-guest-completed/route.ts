@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceRoleClient } from "@/lib/supabase/server-admin";
+import { getTenantMembership } from "@/lib/tenant-auth/context";
 
 export const dynamic = "force-dynamic";
 
@@ -23,10 +24,6 @@ export async function POST(request: NextRequest) {
   }
 
   const admin = createServiceRoleClient();
-  const { data: profile } = await admin.from("profiles").select("tenant_id").eq("user_id", user.id).single();
-  if (!profile?.tenant_id) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
 
   const { data: ticket } = await admin
     .from("tickets")
@@ -34,7 +31,12 @@ export async function POST(request: NextRequest) {
     .eq("id", ticketId)
     .single();
 
-  if (!ticket || (ticket as { tenant_id: string }).tenant_id !== profile.tenant_id) {
+  if (!ticket) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+  const ticketTenantId = (ticket as { tenant_id: string }).tenant_id;
+  const membership = await getTenantMembership(admin, user.id, ticketTenantId);
+  if (!membership) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
   if (ticket.status !== "resolved") {

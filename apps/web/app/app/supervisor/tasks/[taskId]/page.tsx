@@ -3,6 +3,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceRoleClient } from "@/lib/supabase/server-admin";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { RunStatusBadge } from "@/components/operations/RunStatusBadge";
 
 export const dynamic = "force-dynamic";
 
@@ -62,53 +64,80 @@ export default async function SupervisorTaskDetailPage({
   const rt = Array.isArray(rtRaw) ? rtRaw[0] ?? null : rtRaw;
 
   return (
-    <div className="p-6">
-      <nav className="mb-6 flex items-center gap-2">
-        <Button variant="ghost" size="sm" asChild>
-          <Link href="/app/supervisor">Tasks</Link>
+    <div className="min-h-full p-6 md:p-8 max-w-3xl space-y-8">
+      <nav className="flex flex-wrap items-center gap-2 text-sm">
+        <Button variant="ghost" size="sm" className="-ml-2" asChild>
+          <Link href="/app/checklist-runs">← Runs</Link>
         </Button>
-        <span className="text-muted-foreground">/</span>
-        <h1 className="text-xl font-semibold tracking-tight">
-          {rt?.label ?? rt?.code ?? "Task"} – {loc?.identifier}
-        </h1>
       </nav>
 
-      <div className="space-y-6">
-        <div className="rounded-lg border p-4">
-          <p className="text-sm text-muted-foreground">Status</p>
-          <p className="font-medium capitalize">{task.status.replace("_", " ")}</p>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Created {new Date(task.created_at).toLocaleString()}
-            {task.completed_at && ` · Completed ${new Date(task.completed_at).toLocaleString()}`}
-          </p>
+      <header className="space-y-3 border-b border-border/60 pb-6">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
+          Run detail
+        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            {rt?.label ?? rt?.code ?? "Task"}
+          </h1>
+          <RunStatusBadge status={task.status} />
         </div>
+        <p className="text-sm text-muted-foreground">
+          <span className="font-medium text-foreground">{loc?.identifier}</span>
+          {loc?.type && <span> · {loc.type}</span>}
+          {rt?.department && <span> · {rt.department}</span>}
+        </p>
+      </header>
+
+      <div className="space-y-4">
+        <Card className="border-border/60 shadow-sm">
+          <CardHeader className="pb-2">
+            <span className="text-sm font-medium text-muted-foreground">Timeline</span>
+          </CardHeader>
+          <CardContent className="text-sm text-muted-foreground space-y-1">
+            <p>
+              Created <span className="text-foreground">{new Date(task.created_at).toLocaleString()}</span>
+            </p>
+            {task.completed_at && (
+              <p>
+                Completed <span className="text-foreground">{new Date(task.completed_at).toLocaleString()}</span>
+              </p>
+            )}
+            <p className="text-xs">SLA {task.sla_minutes} min · Priority {task.priority}</p>
+          </CardContent>
+        </Card>
 
         {proof && (
-          <div className="rounded-lg border p-4">
-            <p className="mb-2 text-sm font-medium text-foreground">Proof of work</p>
-            {proof.photo_path && (
-              <p className="text-sm text-muted-foreground">Photo: {proof.photo_path}</p>
-            )}
-            {proof.note && <p className="mt-1 text-sm">{proof.note}</p>}
-          </div>
+          <Card className="border-border/60 shadow-sm">
+            <CardHeader className="pb-2">
+              <span className="text-sm font-medium text-foreground">Proof of work</span>
+            </CardHeader>
+            <CardContent className="text-sm space-y-1">
+              {proof.photo_path && <p className="text-muted-foreground break-all">Photo: {proof.photo_path}</p>}
+              {proof.note && <p>{proof.note}</p>}
+            </CardContent>
+          </Card>
         )}
 
-        <div className="rounded-lg border p-4">
-          <p className="mb-2 text-sm font-medium text-foreground">Event timeline</p>
-          <ul className="space-y-2 text-sm">
-            {(events ?? []).map((ev) => (
-              <li key={ev.id} className="flex gap-2">
-                <span className="text-muted-foreground">
-                  {new Date(ev.timestamp).toLocaleString()}
-                </span>
-                <span className="capitalize">{ev.event_type.replace("_", " ")}</span>
-                <span className="text-muted-foreground">
-                  ({ev.actor_type} / {ev.actor_role})
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <Card className="border-border/60 shadow-sm">
+          <CardHeader className="pb-2">
+            <span className="text-sm font-medium text-foreground">Activity</span>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-3 text-sm">
+              {(events ?? []).map((ev) => (
+                <li key={ev.id} className="flex flex-col gap-0.5 sm:flex-row sm:flex-wrap sm:gap-x-2 border-b border-border/40 last:border-0 last:pb-0 pb-3">
+                  <span className="text-muted-foreground tabular-nums shrink-0">
+                    {new Date(ev.timestamp).toLocaleString()}
+                  </span>
+                  <span className="font-medium capitalize">{ev.event_type.replace(/_/g, " ")}</span>
+                  <span className="text-muted-foreground text-xs sm:text-sm">
+                    {ev.actor_type} / {ev.actor_role}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

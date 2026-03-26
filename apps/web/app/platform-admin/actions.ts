@@ -9,14 +9,16 @@ const TENANT_LOGO_PREFIX = "tenant-logos";
 
 async function ensurePlatformAdmin() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) throw new Error("Not authenticated");
-  const { data: profile } = await supabase
-    .from("profiles")
+  const { data: up } = await supabase
+    .from("user_profiles")
     .select("is_platform_admin")
     .eq("user_id", user.id)
-    .single();
-  if (!profile?.is_platform_admin) throw new Error("Forbidden");
+    .maybeSingle();
+  if (!up?.is_platform_admin) throw new Error("Forbidden");
   return { user, supabase };
 }
 
@@ -102,14 +104,50 @@ export async function updateUserPassword(userId: string, password: string) {
 }
 
 export async function setUserRole(userId: string, tenantId: string, role: "admin" | "manager" | "staff") {
-  const { supabase } = await ensurePlatformAdmin();
-  const { error } = await supabase
-    .from("profiles")
-    .update({ tenant_id: tenantId, role })
-    .eq("user_id", userId);
+  const { supabase, user } = await ensurePlatformAdmin();
+  const { error } = await supabase.from("tenant_memberships").upsert(
+    {
+      tenant_id: tenantId,
+      user_id: userId,
+      role,
+      status: "active",
+      created_by: user.id,
+      disabled_at: null,
+    },
+    { onConflict: "tenant_id,user_id" }
+  );
   if (error) return { error: error.message };
+
+  if (role === "admin") {
+    await supabase
+      .from("tenant_onboarding")
+      .update({ primary_admin_user_id: userId, updated_at: new Date().toISOString() })
+      .eq("tenant_id", tenantId)
+      .is("primary_admin_user_id", null);
+  }
+
   revalidatePath("/platform-admin");
   return { ok: true };
+}
+
+/** Platform admin: create invite; returns one-time token in JSON (show operator once). */
+export async function createTenantInviteForCustomer(
+  tenantId: string,
+  email: string,
+  role: "admin" | "manager" | "staff"
+) {
+  await ensurePlatformAdmin();
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("hh_tenant_create_invite", {
+    p_tenant_id: tenantId,
+    p_email: email.trim(),
+    p_role: role,
+  });
+  if (error) return { error: error.message };
+  const row = data as { ok?: boolean; error?: string; token?: string } | null;
+  if (!row?.ok) return { error: row?.error ?? "Invite failed" };
+  revalidatePath(`/platform-admin/tenants/${tenantId}`);
+  return { ok: true as const, token: row.token };
 }
 
 /** Returns map of user_id -> email for the given user ids (platform admin only). */

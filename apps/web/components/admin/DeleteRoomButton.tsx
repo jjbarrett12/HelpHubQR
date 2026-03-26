@@ -9,22 +9,31 @@ export function DeleteRoomButton({
   roomId,
   siteId,
   roomLabel,
+  isArchived = false,
 }: {
   roomId: string;
   siteId: string;
   roomLabel: string;
+  isArchived?: boolean;
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleDelete() {
-    if (!confirm(`Delete room “${roomLabel}”? This cannot be undone.`)) return;
+    if (
+      !confirm(
+        `Archive location “${roomLabel}”? The QR link will stop working; past tickets stay in history.`
+      )
+    )
+      return;
     setLoading(true);
     setError(null);
     const result: DeleteRoomResult = await deleteRoom(roomId, siteId);
     setLoading(false);
     if (!result.ok) setError(result.error);
   }
+
+  if (isArchived) return null;
 
   return (
     <span className="flex items-center gap-2">
@@ -35,7 +44,7 @@ export function DeleteRoomButton({
         className="text-destructive hover:text-destructive hover:bg-destructive/10"
         onClick={handleDelete}
         disabled={loading}
-        aria-label={`Delete ${roomLabel}`}
+        aria-label={`Archive ${roomLabel}`}
       >
         <Trash2 className="h-4 w-4" />
       </Button>

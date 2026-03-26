@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
+import { isPlatformAdminUser } from "@/lib/tenant-auth/context";
 import { Button } from "@/components/ui/button";
 import { LayoutDashboard, Users, LogOut } from "lucide-react";
 
@@ -15,12 +16,8 @@ export default async function PlatformAdminLayout({
   if (error || !user) {
     redirect("/login");
   }
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("is_platform_admin")
-    .eq("user_id", user.id)
-    .single();
-  if (!profile?.is_platform_admin) {
+  const isAdmin = await isPlatformAdminUser(supabase, user.id);
+  if (!isAdmin) {
     redirect("/app");
   }
 
@@ -38,6 +35,12 @@ export default async function PlatformAdminLayout({
           <nav className="flex gap-2">
             <Link href="/platform-admin">
               <Button variant="ghost" size="sm">Customers</Button>
+            </Link>
+            <Link href="/admin/onboarding">
+              <Button variant="ghost" size="sm">Onboarding console</Button>
+            </Link>
+            <Link href="/platform-admin/onboarding">
+              <Button variant="ghost" size="sm" className="text-muted-foreground">Legacy list</Button>
             </Link>
           </nav>
         </div>

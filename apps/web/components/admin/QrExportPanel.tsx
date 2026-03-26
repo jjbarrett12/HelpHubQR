@@ -14,13 +14,13 @@ import {
 import QRCode from "qrcode";
 import { Download } from "lucide-react";
 import { naturalCompare } from "@/lib/utils";
+import { prepareQrPrintUrls } from "@/app/app/admin/rooms/actions";
 
-type RoomWithToken = {
+export type RoomForQrExport = {
   id: string;
   room_label: string;
   floor: string | null;
   active: boolean;
-  room_tokens: { token: string }[] | { token: string } | null;
 };
 
 function escapeHtml(s: string): string {
@@ -31,22 +31,11 @@ function escapeHtml(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
-/** Print the room name as-is (no "Room" prefix). e.g. "Pool" stays "Pool". */
 function formatRoomHeading(roomLabel: string): string {
   const t = (roomLabel ?? "").trim();
   return t || "—";
 }
 
-/** Normalize room_tokens to an array (Supabase can return array or single object; RSC may alter shape). */
-function getTokenList(room: RoomWithToken): { token: string }[] {
-  const t = room.room_tokens;
-  if (!t) return [];
-  if (Array.isArray(t)) return t;
-  if (typeof t === "object" && t !== null && "token" in t) return [t as { token: string }];
-  return [];
-}
-
-/** Fetch image URL to data URL for reliable printing (avoids CORS/blank in print). */
 async function imageUrlToDataUrl(url: string): Promise<string | null> {
   try {
     const res = await fetch(url, { mode: "cors" });
@@ -68,53 +57,57 @@ export function QrExportPanel({
   siteName,
   siteLogoUrl,
   rooms,
-  baseUrl,
+  siteArchived = false,
 }: {
   siteId: string;
   siteName: string;
   siteLogoUrl: string | null;
-  rooms: RoomWithToken[];
-  baseUrl: string;
+  rooms: RoomForQrExport[];
+  siteArchived?: boolean;
 }) {
   const [generating, setGenerating] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
   const [exportMode, setExportMode] = useState<"all" | "single">("single");
   const [selectedRoomId, setSelectedRoomId] = useState<string>("");
+  const [reissueLinks, setReissueLinks] = useState(true);
   const printRef = useRef<HTMLDivElement>(null);
 
-  const withTokens = rooms
-    .map((r) => ({ ...r, tokenList: getTokenList(r) }))
-    .filter((r) => r.tokenList.length > 0)
-    .map((r) => ({ ...r, room_tokens: r.tokenList }))
-    .sort((a, b) => naturalCompare(a.room_label ?? "", b.room_label ?? ""));
+  const sortedRooms = [...rooms].sort((a, b) => naturalCompare(a.room_label ?? "", b.room_label ?? ""));
 
-  // Auto-select the only room when there's exactly one with a token
   useEffect(() => {
-    if (exportMode === "single" && withTokens.length === 1 && !selectedRoomId) {
-      setSelectedRoomId(withTokens[0].id);
+    if (exportMode === "single" && sortedRooms.length === 1 && !selectedRoomId) {
+      setSelectedRoomId(sortedRooms[0].id);
     }
-    if (exportMode === "single" && selectedRoomId && !withTokens.some((r) => r.id === selectedRoomId)) {
-      setSelectedRoomId(withTokens[0]?.id ?? "");
+    if (exportMode === "single" && selectedRoomId && !sortedRooms.some((r) => r.id === selectedRoomId)) {
+      setSelectedRoomId(sortedRooms[0]?.id ?? "");
     }
-  }, [exportMode, withTokens, selectedRoomId]);
+  }, [exportMode, sortedRooms, selectedRoomId]);
 
-  const roomsToExport =
+  const roomIdsToPrint =
     exportMode === "single" && selectedRoomId
-      ? withTokens.filter((r) => r.id === selectedRoomId)
-      : withTokens;
+      ? [selectedRoomId]
+      : sortedRooms.map((r) => r.id);
 
   async function handlePrintPdf() {
-    if (roomsToExport.length === 0) return;
+    if (roomIdsToPrint.length === 0) return;
     setGenerating(true);
     setExportError(null);
     try {
+      const prep = await prepareQrPrintUrls(siteId, roomIdsToPrint, { reissue: reissueLinks });
+      if (!prep.ok) {
+        setExportError(prep.error);
+        setGenerating(false);
+        return;
+      }
+
+      const urlByRoomId = new Map(prep.cards.map((c) => [c.roomId, c.url]));
       const logoDataUrl = siteLogoUrl ? await imageUrlToDataUrl(siteLogoUrl) : null;
 
       const cards = await Promise.all(
-        roomsToExport.map(async (r) => {
-          const url = `${baseUrl}/t/${r.room_tokens[0].token}`;
+        prep.cards.map(async (c) => {
+          const url = urlByRoomId.get(c.roomId) ?? c.url;
           const dataUrl = await QRCode.toDataURL(url, { width: 180, margin: 1 });
-          return { room_label: r.room_label, url, dataUrl };
+          return { room_label: c.room_label, url, dataUrl };
         })
       );
 
@@ -191,7 +184,8 @@ export function QrExportPanel({
   }
 
   const canExport =
-    withTokens.length > 0 &&
+    !siteArchived &&
+    sortedRooms.length > 0 &&
     (exportMode === "all" || (exportMode === "single" && selectedRoomId));
 
   return (
@@ -199,16 +193,38 @@ export function QrExportPanel({
       <CardHeader>
         <h2 className="text-lg font-medium">Export QR cards</h2>
         <p className="text-sm text-muted-foreground">
-          To print one room: choose &quot;Single room&quot;, pick the room below, then click Print. To print all rooms with QR codes: choose &quot;All rooms&quot;.
+          Choose a room or all rooms, then print. Links are stored as secure hashes only—printing issues new /t/… links when
+          &quot;Issue new secure links&quot; is on (recommended). Previous printed codes for affected rooms will stop working.
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
         <div ref={printRef} className="hidden" />
+        {siteArchived && (
+          <p className="text-sm text-amber-800 dark:text-amber-400 rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2">
+            This customer is archived. Exporting new QR cards is disabled.
+          </p>
+        )}
+        <label className={`flex items-start gap-2 text-sm ${siteArchived ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}>
+          <input
+            type="checkbox"
+            className="mt-1"
+            checked={reissueLinks}
+            disabled={siteArchived}
+            onChange={(e) => setReissueLinks(e.target.checked)}
+          />
+          <span>
+            <span className="font-medium">Issue new secure links</span>
+            <span className="text-muted-foreground block text-xs mt-0.5">
+              Required to generate QR images. Revokes the current token for each printed room and mints a replacement.
+            </span>
+          </span>
+        </label>
         <div className="flex flex-wrap items-end gap-4">
           <div className="space-y-2">
             <Label className="text-xs font-medium">Export</Label>
             <Select
               value={exportMode}
+              disabled={siteArchived}
               onValueChange={(v) => {
                 setExportMode(v as "all" | "single");
                 if (v === "all") setSelectedRoomId("");
@@ -219,22 +235,19 @@ export function QrExportPanel({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="single">Single room</SelectItem>
-                <SelectItem value="all">All rooms ({withTokens.length})</SelectItem>
+                <SelectItem value="all">All rooms ({sortedRooms.length})</SelectItem>
               </SelectContent>
             </Select>
           </div>
           {exportMode === "single" && (
             <div className="space-y-2">
               <Label className="text-xs font-medium">Which room to print?</Label>
-              <Select
-                value={selectedRoomId}
-                onValueChange={setSelectedRoomId}
-              >
+              <Select value={selectedRoomId} onValueChange={setSelectedRoomId} disabled={siteArchived}>
                 <SelectTrigger className="w-[220px]">
                   <SelectValue placeholder="Select a room…" />
                 </SelectTrigger>
                 <SelectContent>
-                  {withTokens.map((r) => (
+                  {sortedRooms.map((r) => (
                     <SelectItem key={r.id} value={r.id}>
                       {r.room_label}
                       {r.floor ? ` (${r.floor})` : ""}
@@ -245,28 +258,23 @@ export function QrExportPanel({
             </div>
           )}
         </div>
-        <Button
-          onClick={handlePrintPdf}
-          disabled={!canExport || generating}
-        >
+        <Button onClick={handlePrintPdf} disabled={siteArchived || !canExport || generating}>
           <Download className="h-4 w-4 mr-2" />
           {generating
             ? "Preparing…"
             : !canExport
               ? "Print / Save as PDF"
-              : roomsToExport.length === 1
-                ? `Print / Save as PDF (${roomsToExport[0].room_label})`
-                : `Print / Save as PDF (${roomsToExport.length} rooms)`}
+              : roomIdsToPrint.length === 1
+                ? `Print / Save as PDF (${sortedRooms.find((r) => r.id === roomIdsToPrint[0])?.room_label ?? "room"})`
+                : `Print / Save as PDF (${roomIdsToPrint.length} rooms)`}
         </Button>
         {exportError && (
           <p className="text-sm text-destructive" role="alert">
             {exportError}
           </p>
         )}
-        {withTokens.length === 0 && !exportError && (
-          <p className="text-sm text-muted-foreground">
-            Generate QR for at least one room from the list below, then choose it here.
-          </p>
+        {sortedRooms.length === 0 && !exportError && (
+          <p className="text-sm text-muted-foreground">Add at least one location to print QR cards.</p>
         )}
       </CardContent>
     </Card>

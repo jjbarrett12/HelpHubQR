@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import Image from "next/image";
 import { BrandingForm } from "./BrandingForm";
 import { BrandingThemeForm } from "./BrandingThemeForm";
+import { OnboardingSetupSection } from "./OnboardingSetupSection";
+import { getDefaultTenantIdForUser, isTenantDashboardAdmin } from "@/lib/tenant-auth/context";
 
 export default async function SettingsPage() {
   const supabase = await createClient();
@@ -11,20 +13,23 @@ export default async function SettingsPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("tenant_id, role")
-    .eq("user_id", user.id)
-    .single();
-  if (!profile?.tenant_id || profile.role !== "admin") {
+  const defaultTenantId = await getDefaultTenantIdForUser(supabase, user.id);
+  const canBrand = defaultTenantId ? await isTenantDashboardAdmin(supabase, user.id, defaultTenantId) : false;
+  if (!defaultTenantId || !canBrand) {
     redirect("/app");
   }
 
   const { data: tenant } = await supabase
     .from("tenants")
     .select("name, logo_url, branding")
-    .eq("id", profile.tenant_id)
+    .eq("id", defaultTenantId)
     .single();
+
+  const { data: onboarding } = await supabase
+    .from("tenant_onboarding")
+    .select("status, completed_at, sites_created_count, rooms_created_count")
+    .eq("tenant_id", defaultTenantId)
+    .maybeSingle();
 
   const branding = (tenant?.branding as { primary_color?: string | null } | null) ?? {};
   const primaryColor = branding.primary_color ?? null;
@@ -37,6 +42,14 @@ export default async function SettingsPage() {
       </p>
 
       <div className="mt-8 space-y-8">
+        {onboarding && (
+          <OnboardingSetupSection
+            status={onboarding.status}
+            completedAt={onboarding.completed_at}
+            sitesCreatedCount={onboarding.sites_created_count ?? 0}
+            roomsCreatedCount={onboarding.rooms_created_count ?? 0}
+          />
+        )}
         <section className="rounded-2xl border border-border bg-card p-6 shadow-sm dark:border-border/50">
           <p className="text-sm font-medium text-foreground">Logo</p>
         <div className="mt-3 flex items-center gap-4">

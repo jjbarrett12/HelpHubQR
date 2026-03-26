@@ -9,7 +9,7 @@ import type { RealtimeChannel } from "@supabase/supabase-js";
 export type TicketRow = {
   id: string;
   room_label_snapshot: string;
-  request_type: string | null;
+  request_type_label_snapshot: string | null;
   note: string;
   status: string;
   priority: string;
@@ -31,7 +31,7 @@ export function TicketList({ siteId }: { siteId: string }) {
     let query = supabase
       .from("tickets")
       .select(
-        "id, room_label_snapshot, request_type, note, status, priority, created_at, assigned_to"
+        "id, room_label_snapshot, request_type_label_snapshot, note, status, priority, created_at, assigned_to"
       )
       .eq("site_id", siteId)
       .order("created_at", { ascending: false });
@@ -59,7 +59,7 @@ export function TicketList({ siteId }: { siteId: string }) {
           let q = supabase
             .from("tickets")
             .select(
-              "id, room_label_snapshot, request_type, note, status, priority, created_at, assigned_to"
+              "id, room_label_snapshot, request_type_label_snapshot, note, status, priority, created_at, assigned_to"
             )
             .eq("site_id", siteId)
             .order("created_at", { ascending: false });

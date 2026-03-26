@@ -19,7 +19,6 @@ export function CreateSiteForm() {
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [timezone, setTimezone] = useState("UTC");
-  const [roomCount, setRoomCount] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,7 +30,6 @@ export function CreateSiteForm() {
     formData.set("name", name);
     formData.set("address", address);
     formData.set("timezone", timezone);
-    if (roomCount) formData.set("room_count", roomCount);
     const result = await createSite(formData);
     setLoading(false);
     if (result?.error) {
@@ -42,7 +40,6 @@ export function CreateSiteForm() {
     setName("");
     setAddress("");
     setTimezone("UTC");
-    setRoomCount("");
   }
 
   return (
@@ -85,18 +82,6 @@ export function CreateSiteForm() {
               accept="image/*"
               name="logo"
               className="cursor-pointer"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="site-room-count">Room / location count (optional)</Label>
-            <Input
-              id="site-room-count"
-              type="number"
-              min={0}
-              name="room_count"
-              value={roomCount}
-              onChange={(e) => setRoomCount(e.target.value)}
-              placeholder="e.g. 50"
             />
           </div>
           <div className="space-y-2">

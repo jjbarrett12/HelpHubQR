@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,9 +13,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { requestTypes } from "@/lib/validators";
+import { TICKET_REQUEST_TYPE_OPTIONS } from "@/lib/tickets/request-types-catalog";
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const NO_REQUEST_TYPE = "__none__";
 
 export function PublicTicketForm({
   token,
@@ -25,32 +25,43 @@ export function PublicTicketForm({
   roomLabel: string;
 }) {
   const router = useRouter();
-  const [requestType, setRequestType] = useState<string>("");
+  const [requestTypeCode, setRequestTypeCode] = useState<string>("");
   const [note, setNote] = useState("");
   const [priority, setPriority] = useState<"low" | "normal" | "high">("normal");
   const [guestEmail, setGuestEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const submitLock = useRef(false);
+  const clientRequestId = useMemo(
+    () =>
+      typeof crypto !== "undefined" && "randomUUID" in crypto
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    []
+  );
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    if (submitLock.current || loading) return;
     const trimmed = note.trim();
     if (trimmed.length < 5) {
       setError("Please enter at least 5 characters in the note.");
       return;
     }
+    submitLock.current = true;
     setLoading(true);
     try {
-      const res = await fetch(`${SUPABASE_URL}/functions/v1/create-ticket`, {
+      const res = await fetch("/api/public/guest-ticket", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           token,
-          request_type: requestType || null,
+          request_type_code: requestTypeCode ? requestTypeCode : null,
           note: trimmed,
           priority,
           guest_email: guestEmail.trim() || null,
+          client_request_id: clientRequestId,
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -66,6 +77,7 @@ export function PublicTicketForm({
     } catch {
       setError("Network error. Please try again.");
     } finally {
+      submitLock.current = false;
       setLoading(false);
     }
   }
@@ -74,14 +86,18 @@ export function PublicTicketForm({
     <form onSubmit={onSubmit} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="request_type">Request type</Label>
-        <Select value={requestType} onValueChange={setRequestType}>
+        <Select
+          value={requestTypeCode || NO_REQUEST_TYPE}
+          onValueChange={(v) => setRequestTypeCode(v === NO_REQUEST_TYPE ? "" : v)}
+        >
           <SelectTrigger id="request_type">
             <SelectValue placeholder="Select type (optional)" />
           </SelectTrigger>
           <SelectContent>
-            {requestTypes.map((t) => (
-              <SelectItem key={t} value={t}>
-                {t}
+            <SelectItem value={NO_REQUEST_TYPE}>No preference</SelectItem>
+            {TICKET_REQUEST_TYPE_OPTIONS.map((opt) => (
+              <SelectItem key={opt.code} value={opt.code}>
+                {opt.label}
               </SelectItem>
             ))}
           </SelectContent>

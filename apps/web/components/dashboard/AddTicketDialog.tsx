@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   Dialog,
@@ -19,7 +19,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { requestTypes } from "@/lib/validators";
+import { TICKET_REQUEST_TYPE_OPTIONS } from "@/lib/tickets/request-types-catalog";
+
+const NO_REQUEST_TYPE = "__none__";
 import { createTicketForRoom } from "@/app/app/sites/actions";
 import { Plus } from "lucide-react";
 
@@ -29,19 +31,33 @@ export function AddTicketDialog({
   siteId,
   siteName,
   rooms,
+  disabled = false,
+  disabledReason,
 }: {
   siteId: string;
   siteName: string;
   rooms: Room[];
+  disabled?: boolean;
+  disabledReason?: string;
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [roomId, setRoomId] = useState("");
-  const [requestType, setRequestType] = useState<string>("");
+  const [requestTypeCode, setRequestTypeCode] = useState<string>("");
   const [note, setNote] = useState("");
   const [priority, setPriority] = useState<"low" | "normal" | "high">("normal");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const clientRequestIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (open) {
+      clientRequestIdRef.current =
+        typeof crypto !== "undefined" && "randomUUID" in crypto
+          ? crypto.randomUUID()
+          : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    }
+  }, [open]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -60,20 +76,36 @@ export function AddTicketDialog({
       siteId,
       roomId,
       trimmed,
-      requestType || null,
-      priority
+      requestTypeCode.trim() || null,
+      priority,
+      clientRequestIdRef.current
     );
     setLoading(false);
     if (result.ok) {
       setOpen(false);
       setRoomId("");
-      setRequestType("");
+      setRequestTypeCode("");
       setNote("");
       setPriority("normal");
       router.refresh();
     } else {
       setError(result.error);
     }
+  }
+
+  if (disabled) {
+    return (
+      <Button
+        variant="outline"
+        size="sm"
+        className="gap-1.5"
+        disabled
+        title={disabledReason}
+      >
+        <Plus className="h-4 w-4" />
+        Add ticket (e.g. call-in)
+      </Button>
+    );
   }
 
   return (
@@ -109,14 +141,18 @@ export function AddTicketDialog({
           </div>
           <div className="space-y-2">
             <Label htmlFor="add-ticket-type">Request type (optional)</Label>
-            <Select value={requestType} onValueChange={setRequestType}>
+            <Select
+              value={requestTypeCode || NO_REQUEST_TYPE}
+              onValueChange={(v) => setRequestTypeCode(v === NO_REQUEST_TYPE ? "" : v)}
+            >
               <SelectTrigger id="add-ticket-type">
                 <SelectValue placeholder="Select type" />
               </SelectTrigger>
               <SelectContent>
-                {requestTypes.map((t) => (
-                  <SelectItem key={t} value={t}>
-                    {t}
+                <SelectItem value={NO_REQUEST_TYPE}>No preference</SelectItem>
+                {TICKET_REQUEST_TYPE_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.code} value={opt.code}>
+                    {opt.label}
                   </SelectItem>
                 ))}
               </SelectContent>

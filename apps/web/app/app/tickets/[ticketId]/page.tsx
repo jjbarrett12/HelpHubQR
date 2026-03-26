@@ -12,7 +12,8 @@ export default async function TicketDetailPage({
   const { data: ticket } = await supabase
     .from("tickets")
     .select(`
-      id, room_label_snapshot, request_type, note, status, priority, created_at, created_via,
+      id, room_label_snapshot, request_type_label_snapshot, site_name_snapshot, floor_snapshot,
+      note, status, priority, created_at, created_via,
       assigned_to, assigned_at, resolved_at,
       site_id, site:sites(name)
     `)

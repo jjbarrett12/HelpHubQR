@@ -38,7 +38,9 @@ export async function GET(request: NextRequest) {
 
   let query = supabase
     .from("tickets")
-    .select("id, room_label_snapshot, request_type, note, status, priority, created_at, created_via, resolved_at")
+    .select(
+      "id, room_label_snapshot, request_type_label_snapshot, note, status, priority, created_at, created_via, resolved_at"
+    )
     .eq("site_id", siteId)
     .order("created_at", { ascending: false })
     .limit(10000);
@@ -69,12 +71,16 @@ export async function GET(request: NextRequest) {
   ];
   const csvLines = [
     headers.join(","),
-    ...rows.map((t) =>
-      headers.map((h) => {
-        const v = (t as Record<string, unknown>)[h];
-        return escapeCsv(v == null ? null : typeof v === "string" ? v : new Date(v as string).toISOString());
-      }).join(",")
-    ),
+    ...rows.map((t) => {
+      const row = t as Record<string, unknown>;
+      return headers
+        .map((h) => {
+          const key = h === "request_type" ? "request_type_label_snapshot" : h;
+          const v = row[key];
+          return escapeCsv(v == null ? null : typeof v === "string" ? v : new Date(v as string).toISOString());
+        })
+        .join(",");
+    }),
   ];
   const csv = csvLines.join("\r\n");
 

@@ -23,7 +23,10 @@ export function InvalidLinkBlock({
         {message}
       </p>
       {hint && (
-        <p className="text-center text-sm max-w-sm" style={{ color: "#64748b" }}>
+        <p
+          className="mx-auto max-w-sm px-4 text-center text-sm sm:max-w-md md:max-w-xl"
+          style={{ color: "#64748b" }}
+        >
           {hint}
         </p>
       )}

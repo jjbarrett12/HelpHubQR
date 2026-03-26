@@ -7,18 +7,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 
-type Profile = { user_id: string; role: string };
+type Member = { user_id: string; role: string; status: string };
 
 export function TenantUserList({
   tenantId,
-  profiles,
+  members,
   userEmails,
 }: {
   tenantId: string;
-  profiles: Profile[];
+  members: Member[];
   userEmails: Record<string, string>;
 }) {
-  if (profiles.length === 0) {
+  const active = members.filter((m) => m.status === "active");
+  if (active.length === 0) {
     return (
       <p className="text-sm text-muted-foreground">
         No users in this customer yet. Users appear here when they sign up and are assigned to this tenant.
@@ -28,7 +29,7 @@ export function TenantUserList({
 
   return (
     <div className="space-y-4">
-      {profiles.map((p) => (
+      {active.map((p) => (
         <UserCard
           key={p.user_id}
           userId={p.user_id}

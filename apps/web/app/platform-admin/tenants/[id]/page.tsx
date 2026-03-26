@@ -4,6 +4,7 @@ import Image from "next/image";
 import { getTenantWithUserEmails } from "@/lib/platform-admin";
 import { EditTenantForm } from "@/components/platform-admin/EditTenantForm";
 import { TenantUserList } from "@/components/platform-admin/TenantUserList";
+import { TenantInviteForm } from "@/components/platform-admin/TenantInviteForm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default async function TenantDetailPage({
@@ -59,12 +60,9 @@ export default async function TenantDetailPage({
           <CardTitle>Users</CardTitle>
           <p className="text-sm text-muted-foreground">Manage emails and passwords for this customer.</p>
         </CardHeader>
-        <CardContent>
-          <TenantUserList
-            tenantId={id}
-            profiles={data.profiles}
-            userEmails={data.userEmails}
-          />
+        <CardContent className="space-y-6">
+          <TenantInviteForm tenantId={id} />
+          <TenantUserList tenantId={id} members={data.members} userEmails={data.userEmails} />
         </CardContent>
       </Card>
     </div>
